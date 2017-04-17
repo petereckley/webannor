@@ -1,0 +1,19 @@
+Package: webannor
+Type: Package
+Title: Import text annotation files exported by WebAnno
+Version: 0.1.0
+Authors@R: person("Peter", "Eckley", email = "peter.eckley@gmail.com", 
+    role = c("aut", "cre"))
+Description: Import text annotation files exported by WebAnno.
+Depends:
+    R (>= 3.3.3)
+Imports:
+    purrr (>= 0.2.2),
+    XML (>= 3.98)
+License: GPL-3 + file LICENCE
+Encoding: UTF-8
+LazyData: true
+Suggests: knitr,
+    rmarkdown
+VignetteBuilder: knitr
+RoxygenNote: 6.0.1

@@ -1,0 +1,37 @@
+---
+title: "Importing an annotated project from WebAnno"
+author: "Peter Eckley"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Importing an annotated project from WebAnno}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r}
+library(webannor)
+```
+
+The `webannor` package provides functions to import annotated text files
+exported by WebAnno in the UIMA CAS XMI format. The project export format adopted by WebAnno is a nested (hierarchical) file tree.
+
+`webannor' provides functions for various entry-points in the hierarchy. You can import the whole project by starting at the outermost path...
+
+```{r}
+get_annotations.WebAnno_project("../data-raw/credibility_example")
+```
+
+... or focus on a particular document...
+
+```{r}
+get_annotations.WebAnno_document("../data-raw/credibility_example/annotation/s11748.txt")
+```
+
+... or a particular annotator of a given document (in case there are multiple annotators per document)...
+
+```{r}
+get_annotations.WebAnno_annotator("../data-raw/credibility_example/annotation/s11748.txt/webanno3259911804369659129export.zip")
+```
+
+(Alternatively, `get_annotations.WebAnno_XMI()` will directly process the XMI file that exists inside the annotator-specific zip file.)
