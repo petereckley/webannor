@@ -1,0 +1,556 @@
+---
+title: "Compare annotators"
+output: 
+  html_notebook: 
+    number_sections: yes
+---
+
+# Setup
+
+```{r setup}
+library(credibility)
+library(webannor)
+library(tidyverse)
+library(magrittr)
+library(stringr)
+```
+
+
+# Import annotations
+
+Import annotations from project directory exported by WebAnno.
+
+```{r}
+path <- file.path(getwd(), "../data-raw", "annotations", "2017-04-26")
+annotations <- 
+  get_annotations.WebAnno_project(path) %>% 
+  ### A: could abstract this step into a function to replace annotation field names, and make the replacements to be parameters to the program, rather than hardwired
+  mutate(annotation_type = stringr::str_replace(annotation_type, "Score", "sentiment"),
+         annotation_type = stringr::str_replace(annotation_type, "Context", "topic"),
+         annotation_type = stringr::str_replace(annotation_type, "hypothetical", "nature"))
+annotations
+```
+
+Where the tagging policy is to have a default tag implied by no tag, we need to impute this to the dataframe. In case there are documents which *no* annotator has explicitly tagged, we need an external list of documents shown to annotators.
+
+```{r}
+## A: impute topics to blanks -- Not BoE
+## A: get list of documents input to WebAnno so can also impute over docs lacking any annotations at all
+```
+
+
+Enumerate the set of annotation types that have been applied to this corpus.
+
+```{r}
+unique(annotations$annotation_type)
+```
+
+
+
+# Topics(s)
+
+Extract topics tags.
+
+```{r}
+### A: see if can map over different annotation_types, rather than repeating this pattern for each
+topics <- 
+  annotations %>% 
+  filter(annotation_type == "topic") %>% 
+  select(doc_id, id_annotation, annotator, annotation_value)
+```
+
+Enumerate topics used (not necessarily the full set available for use).
+
+```{r}
+get_tagset_used(topics)
+# topics_list <- unique(topics$annotation_value)
+# topics_list
+```
+
+
+
+
+## Marginal distribution by annotator
+
+Calculate within-annotator topic share.
+
+```{r}
+### Now done directly in ggplot
+# topic_shares <- 
+#   topics %>%
+#   group_by(annotator, annotation_value) %>% 
+#   summarise(ntag = n()) %>% 
+#   group_by(annotator) %>% 
+#   mutate(topic_share = ntag / sum(ntag))
+```
+
+Add the mean over annotators.
+
+```{r}
+# topic_shares_all <- 
+#   topics %>% 
+#   group_by(annotation_value) %>% 
+#   summarise(ntag = n()) %>% 
+#   mutate(topic_share = ntag / sum(ntag),
+#          annotator = "(all)")
+# 
+# topic_shares %<>% 
+#   bind_rows(topic_shares_all)
+# 
+# # order topics in descending order of frequency in (all)
+# topics_ordered <- 
+#   topic_shares_all %>% 
+#   arrange(desc(topic_share)) %>% 
+#   select(annotation_value) %>% 
+#   unlist()
+# 
+# topic_shares
+
+# Simpler code to order topics by overall popularity
+tags_ordered_by_decreasing_popularity <- 
+  topics %>% 
+  group_by(annotation_value) %>% 
+  summarise(n = n()) %>% 
+  arrange(desc(n)) %>% 
+  select(annotation_value) %>% 
+  unlist(use.names = FALSE)
+
+```
+
+
+Visualise.
+
+```{r, fig.height=6}
+# topic_shares %>%  
+#   ggplot(aes(x = annotation_value)) +
+#   geom_bar(aes(y = topic_share), stat = "identity") +
+#   facet_grid(annotator ~ .) +
+#   theme(axis.text.x = element_text(angle = 90, hjust = 0.5, vjust = 0.5)) +
+#   scale_x_discrete(name = NULL,
+#                    labels = function(x) str_wrap(x, width = 15),
+#                    limits = topics_ordered) +
+#   scale_y_continuous(name = "Share of all topic tags applied")
+
+# topics %>%
+#   ggplot(aes(x = annotation_value)) +
+#   geom_bar(aes(y = ..prop.., group = 1)) + # group = 1 needed to get proportions within annotator, rather than as proportion of margin 
+#   facet_grid(annotator ~ ., margins = TRUE) +
+#   theme(axis.text.x = element_text(angle = 90, hjust = 0.5, vjust = 0.5)) +
+#   scale_x_discrete(name = NULL,
+#                    labels = function(x) str_wrap(x, width = 15),
+#                    limits = tags_ordered_by_decreasing_popularity) +
+#   scale_y_continuous(name = "Share of tags by annotator")
+
+get_tags_ordered_by_decreasing_popularity <- function(annotations, tags = NULL) {
+  # get (sorted) list of tags used in annotations
+  tags_used <- 
+      annotations %>% 
+      group_by(annotation_value) %>% 
+      summarise(n = n()) %>% 
+      arrange(desc(n)) %>% 
+      select(annotation_value) %>% 
+      unlist(use.names = FALSE)
+  # if an explicit list of possible tags is given then check for...
+  if (!is.null(tags)) {
+    # ... tags used in the annotations that aren't also in `tags`
+    pretty_print_tags <- function(tags) paste0(tags_unexpected, "", collapse = "\n")
+    tags_unexpected <- setdiff(tags_used, tags)
+    if (length(tags_unexpected) > 0) warning("Tags in `annotations` that were not in `tags`: ", pretty_print_tags(tags_unexpected))
+    # ... unused tags
+    tags_unused <- setdiff(tags, tags_used)
+    if (length(tags_unexpected) > 0) warning("Tags in `tags` that were not used in `annotations`: ", pretty_print_tags(tags_unused))
+    tags <- c(tags_used, tags_unused)
+  } else {
+    tags <- tags_used
+  } 
+  tags
+}
+
+plot_marginal_tag_use_by_annotator <- 
+  function(annotations, tags = NULL, tag_order = c("value", "popularity")) {
+  
+  tag_order <- match.arg(tag_order)
+  tags_ordered <- switch(tag_order, 
+                         popularity = get_tags_ordered_by_decreasing_popularity(annotations),
+                         value = sort(unique(annotations$annotation_value)))  
+  
+  annotations %>%
+    ggplot(aes(x = annotation_value)) +
+    geom_bar(aes(y = ..prop.., group = 1)) + # group = 1 needed to get proportions within annotator, rather than as proportion of margin 
+    facet_grid(annotator ~ ., margins = TRUE) +
+    theme(axis.text.x = element_text(angle = 90, hjust = 0.5, vjust = 0.5)) +
+    scale_x_discrete(name = NULL,
+                     labels = function(x) str_wrap(x, width = 15),
+                     limits = tags_ordered) +
+    scale_y_continuous(name = "Share of tags by annotator")
+}
+```
+
+Dropping non-BoE tags...
+
+```{r, fig.height=6}
+### WARNING! Hardwired topic tag strings
+non_BoE_tags <- c("Government", "Not BoE or government")
+topic_shares %>%  
+  filter(!(annotation_value %in% non_BoE_tags)) %>% 
+  ggplot(aes(x = annotation_value)) +
+  geom_bar(aes(y = topic_share), stat = "identity") +
+  facet_grid(annotator ~ .) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 0.5, vjust = 0.5)) +
+  scale_x_discrete(name = NULL,
+                   labels = function(x) str_wrap(x, width = 15),
+                   limits = topics_ordered[!(topics_ordered %in% non_BoE_tags)]) +
+  scale_y_continuous(name = "Share of all topic tags applied")
+```
+
+
+## Co-occurence of tags within annotator (multiple tagging)
+
+Reusable plotting function.
+
+```{r}
+# Note: could make the below less specific to annotation
+
+annotators_subset <- function(annotations, annotators = NULL) {
+  # Default to all annotators
+  # WARNING! Hardwired column name "annotator"
+  if (!is.null(annotators)) df <- dplyr::filter(annotations, annotator %in% annotators)
+  else df <- annotations
+  df
+}
+
+# Take a list of annotations, by document, annotator, and annotation value (tag), and calculate agreement among a specified subset of annotators.
+### Q: Should we complete missing pairs with zeros? Or provide an option to do so, with corresponding function argument?
+agreement <- function(annotations, annotators = NULL) {
+  df <- annotators_subset(annotations, annotators)
+  # WARNING! Hardwired column name "annotation_value", "doc_id"
+  widyr::pairwise_count(df, annotation_value, doc_id, diag = TRUE)
+}
+
+get_annotators <- function(annotations) unique(annotations$annotator)
+
+### A: check that item1 corresponds to annotator1 and likewise for 2
+agreement_pair <- function(annotations, annotators) {
+  stopifnot(is.character(annotators) && length(annotators) == 2)
+  df <- agreement(annotations, annotators)
+  df$annotator1 = annotators[1]
+  df$annotator2 = annotators[2]
+  df
+}
+
+# Row-bind together all pairwise combinations of annotators, plus optionally margins
+agreement_pairwise <- function(annotations, annotators = NULL, diag = TRUE) {
+  # If an annotator is listed in the annotators argument, but doesn't appear in the annotations dataset, that annotator will be imputed to exist and implicitly have 
+  df <- annotators_subset(annotations, annotators)
+  # If annotators argument is left NULL then infer annotators list from annotations dataframe (so won't see annotators who exist but didn't contribute any annotations)
+  if (is.null(annotators)) annotators <- get_annotators(annotations)
+  annotator_pairs <- 
+    if (diag) {
+      temp <- gtools::permutations(length(annotators), 2, annotators, repeats.allowed = TRUE)
+      split(temp, row(temp))} else combn(annotators, 2, simplify = FALSE)
+  purrr::map_df(annotator_pairs, ~agreement_pair(annotations, .x)) 
+}
+
+# Bubble plot on square matrix of potential annotation values 
+crossplot <- function(df, tags_ordered) {
+  # WARNING! Hardwired column names "item1" and "item2"
+  # WARNING! Hardwired constant "topics_ordered", to be provided from calling environment
+  ggplot(df, aes(x = item1, y = item2)) +
+    geom_point(aes(size = n, colour = log(n))) + 
+    scale_y_discrete(name = NULL, limits = rev(tags_ordered), position = "right") + 
+    scale_x_discrete(name = NULL, limits = tags_ordered, position = "top")  + 
+    theme(axis.text.x  = element_text(angle = 90, vjust = 0.5, hjust = 0))
+}
+
+crossplot_pairwise <- function(annotations, annotators = NULL, margins = TRUE, cutoff = 0, tag_order = c("value", "popularity")) {
+  # WARNING! Hardwired column name "n"
+  df <- agreement_pairwise(annotations, annotators)
+  df <- df[df$n > cutoff,]
+  # WARNING! Hardwired column names "annotator1" and "annotator2"
+  tag_order <- match.arg(tag_order)
+  tags_ordered <- switch(tag_order, 
+                         popularity = get_tags_ordered_by_decreasing_popularity(annotations),
+                         value = sort(unique(annotations$annotation_value)))
+  crossplot(df, tags_ordered) + facet_grid(annotator1 ~ annotator2, margins, switch = "y")
+}
+
+# Wrapper to shape the df and then call the plot function
+crossplot_from_annotations <- function(annotations, annotators = NULL) {
+  df <- agreement(annotations)
+  crossplot(df)
+}
+```
+
+```{r}
+topic_occurrences_within_annotator <- 
+  topics %>% 
+  unite(document_annotator, doc_id, annotator) %>% # pairwise_count will only take a single column for the grouping variable
+  widyr::pairwise_count(annotation_value, document_annotator, diag = FALSE)
+crossplot(topic_occurrences_within_annotator)
+```
+
+
+## Agreement / disagreement by pairs of annotators
+
+Pairwise coccurrences of topics on the same document, from any annotator, including multiple topic tags applied by same annotator to same document. A given tag will be counted (m-1) times, where m is the number of tags applied by any annotator on a given document, i.e. once for each pair of tags that the tag appears in.
+
+Note that to the extent that there are multiple tags from the same annotator (on a given document) with the tags applied by different annotators, this plot does *not* provide a completely clean measure of agreement between annotators (it conflates cooccurence within annotator).
+
+But I don't see a straightforward how to measure agreement where there are multiple tags per annotator.
+
+```{r}
+crossplot_pairwise(topics)
+```
+
+Censor cells with very few co-occurrences, to make it visually easier to identify the main features of disagreement.
+
+```{r}
+crossplot_pairwise(topics, cutoff = 2)
+```
+
+
+Cooccurrences can also be counted within subsets of annotators. Special cases include within the same annotator, i.e. where annotators apply multiple tags, which do they tend to apply together; and within pairs of annotators.
+
+
+## Co-occurrences between pairs of annotators.
+
+```{r}
+# topic_cooccurrences <- 
+#   topics %>% 
+#   widyr::pairwise_count(annotation_value, doc_id, diag = TRUE) # loses annotator id
+
+#crossplot(topic_cooccurrences)
+crossplot_from_topics(topics)
+```
+
+
+## Document-by-document view
+
+```{r}
+topic_unique_annotator <- 
+  topics %>% 
+  select(doc_id, annotator, annotation_value) %>% 
+  group_by(doc_id, annotator) %>% 
+  mutate(document_annotator_seq = row_number(),
+         annotator_unique = ifelse(document_annotator_seq == 1, annotator, paste0(annotator, "_2"))) %>% 
+  ungroup() %>% 
+  select(-annotator, -document_annotator_seq) %>% 
+  spread(annotator_unique, annotation_value)
+topic_unique_annotator
+```
+
+
+
+## Agreement / disagreement by document
+
+```{r}
+topics_per_doc <- 
+  topics %>%
+  group_by(doc_id) %>% 
+  summarise(n_distinct_topic = n_distinct(annotation_value))
+```
+
+Complete agreement.
+
+```{r}
+topics_per_doc %>% 
+  filter(n_distinct_topic == 1)
+```
+
+Documents with some disagreement.
+
+```{r}
+topic_unique_annotator %>% 
+  left_join(topics_per_doc, "doc_id") %>% 
+  filter(n_distinct_topic > 1)
+
+```
+
+
+# Topics
+
+```{r}
+### A: impute a non_boE category
+plot_marginal_tag_use_by_annotator(topics, tag_order = "popularity")
+```
+
+```{r}
+crossplot_pairwise(topics, cutoff = 0, tag_order = "popularity")
+```
+
+
+
+
+# "Nature" tags
+
+```{r}
+natures <- 
+  annotations %>% 
+  filter(annotation_type == "nature")
+
+plot_marginal_tag_use_by_annotator(natures, tag_order = "popularity")
+```
+
+```{r}
+crossplot_pairwise(natures, cutoff = 0, tag_order = "popularity")
+```
+
+
+# Sentiment
+
+Extract sentiment tags into a dataframe.
+
+```{r}
+sentiments <- 
+  annotations %>% 
+  filter(annotation_type == "sentiment") %>% 
+  select(doc_id, id_annotation, annotator, annotation_value)
+```
+
+Map sentiments strings to numbers.
+
+```{r}
+# WARNING! Hardwired strings
+sentiment_map_chr_to_numeric_correct <- 
+  tibble::tribble(
+    ~annotation_value, ~score,
+    "1. Strongly Negative", -3L,
+    "2. Negative"         , -2L,
+    "3. Weakly Negative"  , -1L,
+    "4. Neutral"          ,  0L,
+    "5. Weakly Positive"  , +1L,
+    "6. Positive"         , +2L,
+    "7. Strongly Positive", +3L,
+    "Couldn't score"      , NA_integer_
+  )
+
+sentiment_map_chr_to_numeric_20170426 <- 
+  tibble::tribble(
+    ~annotation_value, ~score,
+    "1. Strongly Negative", -3L,
+    "2. Negative"         , -2L,
+    "3. Weakly Negative"  , -1L,
+    "4. Weakly Positive"  , +1L,
+    "5. Positive"         , +2L,
+    "6. Strongly Positive", +3L,
+    "7. Couldn't score"      ,  0L
+  )
+
+
+# Note this will lump unscored documents in with explicit "Couldn't score" tags, so to check for documents lacking a sentiment tag, I would need to do so with NA_character_ early on
+sentiments %<>%
+  left_join(sentiment_map_chr_to_numeric_20170426, by = "annotation_value") %>% 
+  rename(annotation_value_str = annotation_value,
+         annotation_value = score) # keep varname generic to ease reuse of other code (would become unnecessary if passing as function argument)
+```
+
+
+
+
+## Mean by annotator
+
+Treating sentiment scores as on an interval scale from -3 (strongly negative) to +3 (strongly positive).
+
+```{r}
+sentiments %>% 
+  group_by(annotator) %>% 
+  summarise(mean = mean(as.numeric(annotation_value), na.rm = TRUE))
+```
+
+## Association between annotators
+
+```{r}
+annotators <- unique(sentiments$annotator)
+sentiments %>% 
+  select(-annotation_value_str) %>% 
+  spread(annotator, annotation_value) %>% 
+  select_(.dots = as.list(annotators)) %>%
+  #mutate_all(as.integer) %>% 
+  cor(method = "spearman",
+      use = "pairwise.complete.obs") %>% 
+  knitr::kable(digits = 2)
+```
+
+```{r}
+plot_marginal_tag_use_by_annotator(sentiments, tag_order = "value")
+```
+
+```{r}
+### Q: How to deal with missing value, as will commonly occur? These should only come up when the topic is not BoE.
+crossplot_pairwise(sentiments, cutoff = 0, tag_order = "value")
+```
+
+
+# Level/change tags
+
+```{r}
+levels_or_changes <- 
+  annotations %>% 
+  filter(annotation_type = "level/change")
+
+plot_marginal_tag_use_by_annotator(levels_or_changes)
+```
+
+
+
+# ARCHIVE
+
+## Completeness
+
+A: adapt for checking whatever our final tagging rules are
+
+Each annotator was supposed to apply one and only one sentiment annotation per document. List any violations.
+
+```{r one_annotation_per_annotator}
+### A: modify this so that one and only one tag where there is also a topic tag
+sentiments %>% 
+  complete(doc_id, annotator) %>% 
+  group_by(doc_id, annotator) %>% 
+  summarise(n = sum(!is.na(annotation_value))) %>% 
+  filter(n != 1) %>% 
+  arrange(annotator, doc_id, n)
+```
+
+From here on we work with whatever sentiment annotations are available (not assuming a balanced panel).
+
+## Completeness and multiple topic tagging
+
+Distribution of number of topics per annotator-document pair (if any).
+
+```{r}
+topics_per_annotator_document <- 
+  topics %>% 
+  complete(doc_id, annotator) %>% 
+  group_by(doc_id, annotator) %>% 
+  summarise(n_annotations = sum(!is.na(annotation_value)))
+topics_per_annotator_document
+```
+
+How often is each annotator applying a given number of topic tags to the same  document?
+
+```{r}
+ntopic_per_annotator_document_distribution <- 
+  topics_per_annotator_document %>% 
+  group_by(annotator, n_annotations) %>% 
+  summarise(n = n())
+ntopic_per_annotator_document_distribution
+```
+
+Annotators who have failed to annotate some documents.
+
+```{r}
+ntopic_per_annotator_document_distribution %>% 
+  filter(n_annotations == 0) %>% 
+  select(annotator)
+```
+
+Annotators who have applied multiple tags to some documents.
+
+```{r}
+ntopic_per_annotator_document_distribution %>% 
+  filter(n_annotations > 1) %>% 
+  group_by(annotator) %>%  
+  summarise()
+```
+
+From here on we work with whatever topic annotations are available (not assuming a balanced panel, or a unique topic per annotator-document pair).

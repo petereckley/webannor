@@ -97,10 +97,10 @@ for all documents and annotators.
   \code{get_annotations_by_type.WebAnno_XMI} iteratively over the default
   types hardwired in \code{} in the parent environment of that function (not
   exported). \code{get_annotations.WebAnno_document} and
-  \code{get_annotations.WebAnno_project} include \code{document_name}. This
+  \code{get_annotations.WebAnno_project} include \code{doc_id}. This
   is taken from the filename of the unannotated document input to WebAnno,
   which is preserved in the folder name at an intermediate level in the
-  project directory structure. \code{document_name} can therefore be used to
+  project directory structure. \code{doc_id} can therefore be used to
   keep track of external identifiers for the texts fed into WebAnno, which
   are not otherwise known to WebAnno.
 

@@ -64,10 +64,10 @@
 #'   \code{get_annotations_by_type.WebAnno_XMI} iteratively over the default
 #'   types hardwired in \code{} in the parent environment of that function (not
 #'   exported). \code{get_annotations.WebAnno_document} and
-#'   \code{get_annotations.WebAnno_project} include \code{document_name}. This
+#'   \code{get_annotations.WebAnno_project} include \code{doc_id}. This
 #'   is taken from the filename of the unannotated document input to WebAnno,
 #'   which is preserved in the folder name at an intermediate level in the
-#'   project directory structure. \code{document_name} can therefore be used to
+#'   project directory structure. \code{doc_id} can therefore be used to
 #'   keep track of external identifiers for the texts fed into WebAnno, which
 #'   are not otherwise known to WebAnno.
 #'
@@ -199,12 +199,12 @@ get_annotations.WebAnno_annotator <- function(zipfile) {
 #'   annotators.
 #' @export
 get_annotations.WebAnno_document <- function(path) {
-  document_name <- basename(path)
+  doc_id <- basename(path)
   is_zipfile <- function(file) identical(tolower(tools::file_ext(file)), "zip")
   annotator_zipfiles <- purrr::keep(list.files(path), is_zipfile)
   annotations <- purrr::map_df(annotator_zipfiles, ~get_annotations.WebAnno_annotator(file.path(path, .x)))
   if (!nrow(annotations) == 0) {
-    annotations[,"document_name"] <- document_name
+    annotations[,"doc_id"] <- doc_id
   }
   annotations
 }
@@ -215,7 +215,7 @@ get_annotations.WebAnno_document <- function(path) {
 #'   for all documents and annotators.
 #' @export
 get_annotations.WebAnno_project <- function(path) {
-  document_folders <- list.dirs(file.path(path, "annotation"))
-  suppressWarnings(purrr::map_df(document_folders, get_annotations.WebAnno_document))
+  doc_folders <- list.dirs(file.path(path, "annotation"))
+  suppressWarnings(purrr::map_df(doc_folders, get_annotations.WebAnno_document))
 }
 #View(get_annotations.WebAnno_project("temp/webanno/out"))

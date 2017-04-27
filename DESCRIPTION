@@ -9,7 +9,8 @@ Depends:
     R (>= 3.3.3)
 Imports:
     purrr (>= 0.2.2),
-    XML (>= 3.98)
+    XML (>= 3.98),
+    widyr (>= 0.0.0.9000)
 License: GPL-3 + file LICENCE
 Encoding: UTF-8
 LazyData: true
