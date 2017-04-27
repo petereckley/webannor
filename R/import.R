@@ -18,7 +18,8 @@
 # (hardwired in our WebAnno setup), from the naming in our output tdl_df's
 # (hardwired in the code below)
 .annotation_type_attribute_names <- list(sentiment = "Score",
-                                         topic = "Context")
+                                         topic = "Context",
+                                         nature = "hypothetical")
 
 
 ##  Functions
