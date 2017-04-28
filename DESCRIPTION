@@ -1,7 +1,7 @@
 Package: webannor
 Type: Package
 Title: Import text annotation files exported by WebAnno
-Version: 0.2.0
+Version: 0.2.1
 Authors@R: person("Peter", "Eckley", email = "peter.eckley@gmail.com", 
     role = c("aut", "cre"))
 Description: Import text annotation files exported by WebAnno.

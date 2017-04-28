@@ -1,5 +1,6 @@
-A: put article dates in the filename on the end -- export 3000k
-A: extract examples where we are all consistent; or plot by article on distribution
+A: automate extracting examples where we are all consistent; or plot by article on distribution
+
+A: fix id_annotation seems to not be unique to annotations -- since duplicated across different annotators on the same doc
 
 A: association measures for nominal? (Krippendorff's alpha)
 A: get crossplot_pairwise plotting NA's too

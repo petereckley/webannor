@@ -188,7 +188,11 @@ Column {.tabset}
 
 ```{r}
 datatable_selected <- function(df) {
-  datatable(df %>% select(-id_annotation, -sofa, -begin, -end), filter = 'top')
+  datatable(df %>% select(-id_annotation, -sofa, -begin, -end), 
+            filter = 'top',
+            extensions = 'Buttons', options = list(
+              dom = 'Bfrtip',
+              buttons = c('copy', 'csv', 'excel', 'print'))) # pdf option crashed the page
 }
 datatable_selected(annotations)
 ```
