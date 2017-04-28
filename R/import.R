@@ -19,7 +19,8 @@
 # (hardwired in the code below)
 .annotation_type_attribute_names <- list(sentiment = "Score",
                                          topic = "Context",
-                                         nature = "hypothetical")
+                                         nature = "hypothetical",
+                                         level_change = "dLevelchange")
 
 
 ##  Functions
@@ -216,6 +217,11 @@ get_annotations.WebAnno_document <- function(path) {
 #' @export
 get_annotations.WebAnno_project <- function(path) {
   doc_folders <- list.dirs(file.path(path, "annotation"))
-  suppressWarnings(purrr::map_df(doc_folders, get_annotations.WebAnno_document))
+  ### Q: Should I use structure() here instead? Better practice? More conventional?
+  annotations <- suppressWarnings(purrr::map_df(doc_folders, get_annotations.WebAnno_document))
+  attr(annotations, "project_path") <- path
+  attr(annotations, "doc_ids") <- get_doc_ids_from_project_path(path)
+  class(annotations) <- append(class(annotations), "annotations")
+  annotations
 }
 #View(get_annotations.WebAnno_project("temp/webanno/out"))

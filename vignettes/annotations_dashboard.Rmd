@@ -1,0 +1,460 @@
+---
+title: "Annotations dashboard"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(webannor)
+library(tidyverse)
+library(magrittr)
+library(stringr)
+library(DT)
+```
+
+```{r import_data, include=FALSE}
+project_path <- file.path(getwd(), "../data-raw", "annotations", "2017-04-26")
+annotations <- 
+  get_annotations.WebAnno_project(project_path) %>% 
+  ### A: could abstract this step into a function to replace annotation field names, and make the replacements to be parameters to the program, rather than hardwired
+  mutate(annotation_type = stringr::str_replace(annotation_type, "Score", "sentiment"),
+         annotation_type = stringr::str_replace(annotation_type, "Context", "topic"),
+         annotation_type = stringr::str_replace(annotation_type, "hypothetical", "nature"),
+         annotation_type = stringr::str_replace(annotation_type, "dLevelchange", "level_change")) %>% 
+  select(doc_id, annotator, id_annotation, annotation_type, annotation_value, everything())
+```
+
+```{r recode_tags, include = FALSE}
+# Old tag names that got changes partway through tagging
+annotations %<>% 
+  mutate(annotation_value = 
+           ifelse(annotation_type == "topic" & annotation_value == "Remit (monetary policy)", 
+                  "Objective (monetary policy)", annotation_value))
+
+# Shorter topic tagnames to facilitate ease of reading plots (note the tags then
+# won't align with any tagsets automatically extracted from the WebAnno project 
+# files, if I implement such automatic extraction in future)
+annotations %<>% 
+  mutate(annotation_value = 
+           ifelse(annotation_type == "topic",
+                  recode(annotation_value,
+                         `Financial stability / policy / regulation / supervision` = "Financial",
+                         `Competence / implementation / approach / staff` = "Implementation",
+                         `Instruments (monetary policy)` = "Instruments (MP)",
+                         `Objective (monetary policy)` = "Objectives (MP)"),
+                  annotation_value))
+
+# BELOW FOUND TO BE BUGGY SO MOVED CHANGING SENTIMENT LABELS DOWN TO ACT ON JUST sentiments df
+# # Note this will lump unscored documents in with explicit "Couldn't score" tags, so to check for documents lacking a sentiment tag, I would need to do so with NA_character_ early on
+# annotations %<>%
+#   left_join(sentiment_map_chr_to_numeric_20170426, by = "annotation_value") %>% 
+#   mutate(annotation_value_str = annotation_value,
+#          annotation_value = ifelse(annotation_type == "sentiment", score, annotation_value)) %>%
+#   select(-score) # keep varname generic to ease reuse of other code (would become unnecessary if passing as function argument)
+```
+
+
+```{r impute_tags, include=FALSE}
+### A: consider wrapping the following imputation into the import function -- 
+### could do at document-annotator level using typesystem.xmi, or at project 
+### level using project structure files (the json?) or a user-provided taglist
+### (?).
+
+# In case there are documents which *no* annotator has explicitly tagged, we need an external list of documents shown to annotators.
+
+# Get complete list of doc_ids, annotators, and annotation types (some may never
+# appear in the annotations doc). NOTE: workaround to use the getter function,
+# rather than take direct from attributes of `annotations` object, because this 
+# information being deleted from `annotations` object by dplyr generics
+doc_ids <- get_doc_ids_from_project_path(project_path)
+# Impute missing tags to annotators who failed to apply any tags and so don't
+# appear in the explicit imported tagset. Not yet implemented. We implicitly
+# assume that all annotators have applied at least one tag to at least one
+# document... or else we ignore them.
+annotators <- get_annotators(annotations) # NOTE: will miss any totally silent annotators
+annotation_types <- get_annotation_types(annotations) # NOTE: will miss any totally unused annnotation types
+
+# Complete the annotations by adding missing document-annotator-annotion type 
+# triples. Values are filled with NA, pending imputation of implicit values for 
+# no tag / blank tags 
+## A: Consider wrapping into a function (e.g. impute_blank_tags) once our tagging policy is standardised
+annotations %<>% 
+  complete(doc_id = doc_ids, 
+           annotator = annotators, 
+           annotation_type = annotation_types)
+
+# Tagging instructions were to not apply tags beyond the topic tag if that was the default blank (implicitly "Not BoE") tag. Therefore tag defaults for other tags should only be applied to the subset with explicit BoE topic tags. We therefore split the data.frame to implement this split policy, and then recombined. 
+annotations %<>% 
+  group_by(doc_id, annotator) %>% 
+  mutate(BoE_topic = 
+           sum(annotation_type == "topic" & !is.na(annotation_value)) > 0) %>% 
+  ungroup()
+
+### WARNING: Hardwired field names and default values
+defaults_list_BoE <-   
+  list(topic = "Not BoE",
+       nature = NA, ### Q: Does the blank tag (complement of the named tags) have a unique interpretation for this field?
+       sentiment = "Neutral",
+       level_change = NA) ### Q: Is this going to be given a (blank) default? 
+
+annotations_BoE <- 
+  annotations %>% 
+  filter(BoE_topic) %>% 
+  spread(annotation_type, annotation_value) %>% 
+  filter(!is.na(id_annotation)) %>% # drop spurious rows that spread has introduced
+  replace_na(defaults_list_BoE) %>% 
+  gather_("annotation_type", "annotation_value", annotation_types)
+
+annotations_non_BoE <- 
+  annotations %>% 
+  filter(!BoE_topic) %>% 
+  mutate(annotation_value = ifelse(annotation_type == "topic" & is.na(annotation_value), defaults_list_BoE$topic, annotation_value))
+
+stopifnot( # check that where topic is blank, no other tags have been applied
+  annotations_non_BoE %>% 
+  filter(annotation_type != "topic") %>% 
+  filter(!is.na(annotation_value)) %>% 
+  nrow() == 0)
+
+annotations <- 
+  bind_rows(annotations_BoE, annotations_non_BoE) %>% 
+  arrange(doc_id, annotator, id_annotation, annotation_type, annotation_value)
+```
+
+```{r}
+topics <- 
+  annotations %>% 
+  filter(annotation_type == "topic")
+
+natures <- 
+  annotations %>% 
+  filter(annotation_type == "nature")
+
+sentiments <- 
+  annotations %>% 
+  filter(annotation_type == "sentiment")
+
+level_change <- 
+  annotations %>% 
+  filter(annotation_type == "level_change")
+```
+
+```{r}
+# WARNING! Hardwired strings
+sentiment_map_chr_to_numeric_correct <- 
+  tibble::tribble(
+    ~annotation_value, ~score,
+    "1. Strongly Negative", -3L,
+    "2. Negative"         , -2L,
+    "3. Weakly Negative"  , -1L,
+    "4. Neutral"          ,  0L,
+    "5. Weakly Positive"  , +1L,
+    "6. Positive"         , +2L,
+    "7. Strongly Positive", +3L,
+    "Couldn't score"      , NA_integer_
+  )
+
+sentiment_map_chr_to_numeric_20170426 <- 
+  tibble::tribble(
+    ~annotation_value, ~score,
+    "1. Strongly Negative", -3L,
+    "2. Negative"         , -2L,
+    "3. Weakly Negative"  , -1L,
+    "4. Weakly Positive"  , +1L,
+    "5. Positive"         , +2L,
+    "6. Strongly Positive", +3L,
+    "Neutral"             , 0, # 0L doesn't work -- stays as "Neutral" -- suspect a bug with tribble or dplyr
+    "7. Couldn't score"   , NA_integer_
+  )
+
+# Note this will lump unscored documents in with explicit "Couldn't score" tags, so to check for documents lacking a sentiment tag, I would need to do so with NA_character_ early on
+sentiments %<>%
+  left_join(sentiment_map_chr_to_numeric_20170426, by = "annotation_value") %>% 
+  rename(annotation_value_str = annotation_value,
+         annotation_value = score) # keep varname generic to ease reuse of other code (would become unnecessary if passing as function argument)
+```
+
+
+Raw annotations
+=====================================
+
+Column {.tabset}
+-----------------------------------------------------------------------
+
+### All
+
+```{r}
+datatable_selected <- function(df) {
+  datatable(df %>% select(-id_annotation, -sofa, -begin, -end), filter = 'top')
+}
+datatable_selected(annotations)
+```
+
+### Topics
+
+```{r}
+datatable_selected(topics)
+```
+
+### Natures
+
+```{r}
+datatable_selected(natures %>% filter(BoE_topic))
+```
+
+
+### Sentiments
+
+```{r}
+datatable_selected(sentiments %>% filter(BoE_topic))
+```
+
+
+### Level / change
+
+```{r}
+datatable_selected(level_change %>% filter(BoE_topic))
+```
+
+
+Topics
+=====================================
+
+Column {.tabset}
+-----------------------------------------------------------------------
+
+### With margins
+
+```{r}
+plot_coincidences_annotators_pairwise(topics, cutoff = 0, sort = "frequency", margins = TRUE) +
+  theme(text = element_text(size = 7))
+```
+
+### Without margins
+
+```{r}
+plot_coincidences_annotators_pairwise(topics, cutoff = 0, sort = "frequency", margins = FALSE) +
+  theme(text = element_text(size = 7))
+```
+
+### Without margins, BoE only
+
+```{r}
+topics %>% 
+  filter(annotation_value != "Not BoE") %>% 
+plot_coincidences_annotators_pairwise(cutoff = 0, sort = "frequency", margins = FALSE) +
+  theme(text = element_text(size = 7))
+```
+
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### BoE topic share
+
+```{r}
+topics %>%
+  mutate(annotation_value = ifelse(annotation_value != "Not BoE", "BoE", annotation_value)) %>% 
+  ggplot(aes(x = annotator)) + 
+  geom_bar(aes(fill = annotation_value)) + 
+  coord_flip() + 
+  scale_x_discrete(name = NULL)
+```
+
+### Marginal distributions within BoE topics
+
+```{r}
+topics %>% 
+  filter(annotation_value != "Not BoE") %>% 
+  plot_marginal_tag_frequency(sort = "frequency")
+```
+
+
+Nature of reference
+=====================================
+
+Column {.tabset}
+-----------------------------------------------------------------------
+
+### With margins
+
+```{r}
+natures %>% 
+  filter(BoE_topic) %>% 
+  plot_coincidences_annotators_pairwise(cutoff = 0, sort = "frequency", margins = TRUE) +
+  theme(text = element_text(size = 7))
+```
+
+### Without margins
+
+```{r}
+natures %>% 
+  filter(BoE_topic) %>% 
+  plot_coincidences_annotators_pairwise(cutoff = 0, sort = "frequency", margins = FALSE) +
+  theme(text = element_text(size = 7))
+```
+
+Column {.tabset}
+-----------------------------------------------------------------------
+
+### Marginal distributions
+
+```{r}
+natures %>% 
+  filter(BoE_topic) %>% 
+  plot_marginal_tag_frequency(sort = "frequency")
+```
+
+
+Sentiment
+=====================================
+
+Column {.tabset}
+-----------------------------------------------------------------------
+
+### With margins
+
+```{r}
+sentiments %>% 
+  filter(BoE_topic) %>% 
+  plot_coincidences_annotators_pairwise(cutoff = 0, sort = "value", margins = TRUE) +
+  theme(text = element_text(size = 7))
+```
+
+### Without margins
+
+```{r}
+sentiments %>% 
+  filter(BoE_topic) %>% 
+  plot_coincidences_annotators_pairwise(cutoff = 0, sort = "value", margins = FALSE) +
+  theme(text = element_text(size = 7))
+```
+
+Column
+-----------------------------------------------------------------------
+
+### Marginal distributions
+
+```{r}
+sentiments %>% 
+  filter(BoE_topic) %>% 
+  plot_marginal_tag_frequency(sort = "value")
+```
+
+### Association between annotators
+
+```{r}
+annotators <- get_annotators(annotations)
+sentiments %>% 
+  filter(BoE_topic) %>% 
+  select(doc_id, annotator, annotation_value) %>% 
+  spread(annotator, annotation_value) %>% 
+  select_(.dots = as.list(annotators)) %>%
+  #mutate_all(as.integer) %>% 
+  cor(method = "spearman",
+      use = "pairwise.complete.obs") %>% 
+  knitr::kable(digits = 2)
+```
+
+
+
+Level / change
+=====================================
+
+Column {.tabset}
+-----------------------------------------------------------------------
+
+### With margins
+
+```{r}
+level_change %>% 
+  filter(BoE_topic) %>% 
+  plot_coincidences_annotators_pairwise(cutoff = 0, sort = "frequency", margins = TRUE) +
+  theme(text = element_text(size = 7))
+```
+
+### Without margins
+
+```{r}
+level_change %>% 
+  filter(BoE_topic) %>% 
+  plot_coincidences_annotators_pairwise(cutoff = 0, sort = "frequency", margins = FALSE) +
+  theme(text = element_text(size = 7))
+```
+
+Column {.tabset}
+-----------------------------------------------------------------------
+
+### Marginal distributions
+
+```{r}
+level_change %>% 
+  filter(BoE_topic) %>% 
+  plot_marginal_tag_frequency(sort = "frequency")
+```
+
+
+<!-- # ARCHIVE -->
+
+<!-- ## Completeness -->
+
+<!-- A: adapt for checking whatever our final tagging rules are -->
+
+<!-- Each annotator was supposed to apply one and only one sentiment annotation per document. List any violations. -->
+
+<!-- ```{r one_annotation_per_annotator} -->
+<!-- ### A: modify this so that one and only one tag where there is also a topic tag -->
+<!-- sentiments %>%  -->
+<!--   complete(doc_id, annotator) %>%  -->
+<!--   group_by(doc_id, annotator) %>%  -->
+<!--   summarise(n = sum(!is.na(annotation_value))) %>%  -->
+<!--   filter(n != 1) %>%  -->
+<!--   arrange(annotator, doc_id, n) -->
+<!-- ``` -->
+
+<!-- From here on we work with whatever sentiment annotations are available (not assuming a balanced panel). -->
+
+<!-- ## Completeness and multiple topic tagging -->
+
+<!-- Distribution of number of topics per annotator-document pair (if any). -->
+
+<!-- ```{r} -->
+<!-- topics_per_annotator_document <-  -->
+<!--   topics %>%  -->
+<!--   complete(doc_id, annotator) %>%  -->
+<!--   group_by(doc_id, annotator) %>%  -->
+<!--   summarise(n_annotations = sum(!is.na(annotation_value))) -->
+<!-- topics_per_annotator_document -->
+<!-- ``` -->
+
+<!-- How often is each annotator applying a given number of topic tags to the same  document? -->
+
+<!-- ```{r} -->
+<!-- ntopic_per_annotator_document_distribution <-  -->
+<!--   topics_per_annotator_document %>%  -->
+<!--   group_by(annotator, n_annotations) %>%  -->
+<!--   summarise(n = n()) -->
+<!-- ntopic_per_annotator_document_distribution -->
+<!-- ``` -->
+
+<!-- Annotators who have failed to annotate some documents. -->
+
+<!-- ```{r} -->
+<!-- ntopic_per_annotator_document_distribution %>%  -->
+<!--   filter(n_annotations == 0) %>%  -->
+<!--   select(annotator) -->
+<!-- ``` -->
+
+<!-- Annotators who have applied multiple tags to some documents. -->
+
+<!-- ```{r} -->
+<!-- ntopic_per_annotator_document_distribution %>%  -->
+<!--   filter(n_annotations > 1) %>%  -->
+<!--   group_by(annotator) %>%   -->
+<!--   summarise() -->
+<!-- ``` -->
+
+<!-- From here on we work with whatever topic annotations are available (not assuming a balanced panel, or a unique topic per annotator-document pair). -->

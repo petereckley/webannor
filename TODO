@@ -1,0 +1,50 @@
+A: put article dates in the filename on the end -- export 3000k
+A: extract examples where we are all consistent; or plot by article on distribution
+
+A: association measures for nominal? (Krippendorff's alpha)
+A: get crossplot_pairwise plotting NA's too
+A: decide 7 vs 5 point tag
+A: get tagset from typesystem.xmi, to cover cases of tags never applied to the corpus -- and a function to diff the two sets
+
+A: better if the cross plots show fractions of total pairs in each facet, rather than being normalised by the grand totals --> fix messy code attempting (and failing) to do this in plot_coincidences_annotators_pairwise
+
+Q: how is crossplot dealing with unused tags?
+
+A: remove hardwiring of attribute names, and just autodiscover whatever names are there, using Xpath. Translating the WebAnno names into our preferred names can then be done separately
+
+A: abstract the setdiff unused / unexpected logic for any tag type
+A: standardise language between tags and annotations
+
+# - decide how much hardwiring column names matters
+# - function to check that df is a valid annotations df (consider making a
+# class? but then have to implement lots of generics to stop e.g. dplyr from
+# removing the class when called on the object)
+# - consider making less specific to annotation, e.g. generalise to tags
+
+
+A: deal with dplyr (and probably other packages) generics removing class and attributes on my annotations objects. To address I think I have to write wrapper generics that put the class back on. Nasty. Wonder if there is a utility framework package that does this widely used generics?
+
+Q: would it be easier to deal with unused documents / annotator / tags using factors with explicit levels for all planned documents / annotator / tags?
+
+A: test handling of imputed tags in plotting functions -- adding or not adding unused categories at the right time
+A: better if the cross plots show fractions of total pairs in each facet
+A: add further tabs to dashboard and make easy to interpret
+
+Q: how is crossplot dealing with unused tags?
+
+A: remove hardwiring of attribute names, and just autodiscover whatever names are there, using Xpath. Translating the WebAnno names into our preferred names can then be done separately
+
+A: abstract the setdiff unused / unexpected logic for any tag type
+A: standardise language between tags and annotations
+
+A: deal with dplyr (and probably other packages) generics removing class and attributes on my annotations objects. To address I think I have to write wrapper generics that put the class back on. Nasty. Wonder if there is a utility framework package that does this widely used generics?
+
+Q: would it be easier to deal with unused documents / annotator / tags using factors with explicit levels for all planned documents / annotator / tags?
+
+A: test handling of imputed tags in plotting functions -- adding or not adding unused categories at the right time
+
+A: compress the example data and deal with CRAN checks complaint about long file paths on data-raw
+A: rewrite dplyr and ggplot2 etc. calls to use standard eval and thus avoid CRAN warnings/notes
+A: reduce external package dependencies e.g. see if can replace the gtools function calls
+A: document properly
+A: consider renaming tagset_planned to tagset_available?

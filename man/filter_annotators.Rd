@@ -4,10 +4,12 @@
 \alias{filter_annotators}
 \title{Filter to annotations made by specified annotator(s)}
 \usage{
-filter_annotators(annotations, annotators = NULL)
+filter_annotators(annotations, annotators = get_annotators(annotations))
 }
 \arguments{
 \item{annotations}{data.frame containing annotations}
+
+\item{annotators}{character vector of annotator names}
 }
 \description{
 \code{annotation} data.frames must contain the following columns:

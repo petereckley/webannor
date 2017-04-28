@@ -176,9 +176,8 @@ $(document).ready(function () {
 <h1><span class="header-section-number">1</span> Setup</h1>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShjcmVkaWJpbGl0eSlcbmxpYnJhcnkod2ViYW5ub3IpXG5saWJyYXJ5KHRpZHl2ZXJzZSlcbmxpYnJhcnkobWFncml0dHIpXG5saWJyYXJ5KHN0cmluZ3IpXG5gYGAifQ== -->
-<pre class="r"><code>library(credibility)
-library(webannor)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeSh3ZWJhbm5vcilcbmxpYnJhcnkodGlkeXZlcnNlKVxubGlicmFyeShtYWdyaXR0cilcbmxpYnJhcnkoc3RyaW5ncilcbmBgYCJ9 -->
+<pre class="r"><code>library(webannor)
 library(tidyverse)
 library(magrittr)
 library(stringr)</code></pre>
@@ -191,32 +190,115 @@ library(stringr)</code></pre>
 <p>Import annotations from project directory exported by WebAnno.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGF0aCA8LSBmaWxlLnBhdGgoZ2V0d2QoKSwgXCIuLi9kYXRhLXJhd1wiLCBcImFubm90YXRpb25zXCIsIFwiMjAxNy0wNC0yNlwiKVxuYW5ub3RhdGlvbnMgPC0gXG4gIGdldF9hbm5vdGF0aW9ucy5XZWJBbm5vX3Byb2plY3QocGF0aCkgJT4lIFxuICAjIyMgQTogY291bGQgYWJzdHJhY3QgdGhpcyBzdGVwIGludG8gYSBmdW5jdGlvbiB0byByZXBsYWNlIGFubm90YXRpb24gZmllbGQgbmFtZXMsIGFuZCBtYWtlIHRoZSByZXBsYWNlbWVudHMgdG8gYmUgcGFyYW1ldGVycyB0byB0aGUgcHJvZ3JhbSwgcmF0aGVyIHRoYW4gaGFyZHdpcmVkXG4gIG11dGF0ZShhbm5vdGF0aW9uX3R5cGUgPSBzdHJpbmdyOjpzdHJfcmVwbGFjZShhbm5vdGF0aW9uX3R5cGUsIFwiU2NvcmVcIiwgXCJzZW50aW1lbnRcIiksXG4gICAgICAgICBhbm5vdGF0aW9uX3R5cGUgPSBzdHJpbmdyOjpzdHJfcmVwbGFjZShhbm5vdGF0aW9uX3R5cGUsIFwiQ29udGV4dFwiLCBcInRvcGljXCIpLFxuICAgICAgICAgYW5ub3RhdGlvbl90eXBlID0gc3RyaW5ncjo6c3RyX3JlcGxhY2UoYW5ub3RhdGlvbl90eXBlLCBcImh5cG90aGV0aWNhbFwiLCBcIm5hdHVyZVwiKSlcbmFubm90YXRpb25zXG5gYGAifQ== -->
-<pre class="r"><code>path &lt;- file.path(getwd(), &quot;../data-raw&quot;, &quot;annotations&quot;, &quot;2017-04-26&quot;)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucHJvamVjdF9wYXRoIDwtIGZpbGUucGF0aChnZXR3ZCgpLCBcIi4uL2RhdGEtcmF3XCIsIFwiYW5ub3RhdGlvbnNcIiwgXCIyMDE3LTA0LTI2XCIpXG5hbm5vdGF0aW9ucyA8LSBcbiAgZ2V0X2Fubm90YXRpb25zLldlYkFubm9fcHJvamVjdChwcm9qZWN0X3BhdGgpICU+JSBcbiAgIyMjIEE6IGNvdWxkIGFic3RyYWN0IHRoaXMgc3RlcCBpbnRvIGEgZnVuY3Rpb24gdG8gcmVwbGFjZSBhbm5vdGF0aW9uIGZpZWxkIG5hbWVzLCBhbmQgbWFrZSB0aGUgcmVwbGFjZW1lbnRzIHRvIGJlIHBhcmFtZXRlcnMgdG8gdGhlIHByb2dyYW0sIHJhdGhlciB0aGFuIGhhcmR3aXJlZFxuICBtdXRhdGUoYW5ub3RhdGlvbl90eXBlID0gc3RyaW5ncjo6c3RyX3JlcGxhY2UoYW5ub3RhdGlvbl90eXBlLCBcIlNjb3JlXCIsIFwic2VudGltZW50XCIpLFxuICAgICAgICAgYW5ub3RhdGlvbl90eXBlID0gc3RyaW5ncjo6c3RyX3JlcGxhY2UoYW5ub3RhdGlvbl90eXBlLCBcIkNvbnRleHRcIiwgXCJ0b3BpY1wiKSxcbiAgICAgICAgIGFubm90YXRpb25fdHlwZSA9IHN0cmluZ3I6OnN0cl9yZXBsYWNlKGFubm90YXRpb25fdHlwZSwgXCJoeXBvdGhldGljYWxcIiwgXCJuYXR1cmVcIiksXG4gICAgICAgICBhbm5vdGF0aW9uX3R5cGUgPSBzdHJpbmdyOjpzdHJfcmVwbGFjZShhbm5vdGF0aW9uX3R5cGUsIFwiZExldmVsY2hhbmdlXCIsIFwibGV2ZWxfY2hhbmdlXCIpKSAlPiUgXG4gIHNlbGVjdChkb2NfaWQsIGFubm90YXRvciwgaWRfYW5ub3RhdGlvbiwgYW5ub3RhdGlvbl90eXBlLCBhbm5vdGF0aW9uX3ZhbHVlLCBldmVyeXRoaW5nKCkpXG5hbm5vdGF0aW9uc1xuYGBgIn0= -->
+<pre class="r"><code>project_path &lt;- file.path(getwd(), &quot;../data-raw&quot;, &quot;annotations&quot;, &quot;2017-04-26&quot;)
 annotations &lt;- 
-  get_annotations.WebAnno_project(path) %&gt;% 
+  get_annotations.WebAnno_project(project_path) %&gt;% 
   ### A: could abstract this step into a function to replace annotation field names, and make the replacements to be parameters to the program, rather than hardwired
   mutate(annotation_type = stringr::str_replace(annotation_type, &quot;Score&quot;, &quot;sentiment&quot;),
          annotation_type = stringr::str_replace(annotation_type, &quot;Context&quot;, &quot;topic&quot;),
-         annotation_type = stringr::str_replace(annotation_type, &quot;hypothetical&quot;, &quot;nature&quot;))
+         annotation_type = stringr::str_replace(annotation_type, &quot;hypothetical&quot;, &quot;nature&quot;),
+         annotation_type = stringr::str_replace(annotation_type, &quot;dLevelchange&quot;, &quot;level_change&quot;)) %&gt;% 
+  select(doc_id, annotator, id_annotation, annotation_type, annotation_value, everything())
 annotations</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Where the tagging policy is to have a default tag implied by no tag, we need to impute this to the dataframe. In case there are documents which <em>no</em> annotator has explicitly tagged, we need an external list of documents shown to annotators.</p>
+<p>Apply any project-specific fix-ups here.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMgQTogaW1wdXRlIHRvcGljcyB0byBibGFua3MgLS0gTm90IEJvRVxuIyMgQTogZ2V0IGxpc3Qgb2YgZG9jdW1lbnRzIGlucHV0IHRvIFdlYkFubm8gc28gY2FuIGFsc28gaW1wdXRlIG92ZXIgZG9jcyBsYWNraW5nIGFueSBhbm5vdGF0aW9ucyBhdCBhbGxcbmBgYCJ9 -->
-<pre class="r"><code>## A: impute topics to blanks -- Not BoE
-## A: get list of documents input to WebAnno so can also impute over docs lacking any annotations at all</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBPbGQgdGFnIG5hbWVzIHRoYXQgZ290IGNoYW5nZXMgcGFydHdheSB0aHJvdWdoIHRhZ2dpbmdcbmFubm90YXRpb25zICU8PiUgXG4gIG11dGF0ZShhbm5vdGF0aW9uX3ZhbHVlID0gXG4gICAgICAgICAgIGlmZWxzZShhbm5vdGF0aW9uX3R5cGUgPT0gXCJ0b3BpY1wiICYgYW5ub3RhdGlvbl92YWx1ZSA9PSBcIlJlbWl0IChtb25ldGFyeSBwb2xpY3kpXCIsIFxuICAgICAgICAgICAgICAgICAgXCJPYmplY3RpdmUgKG1vbmV0YXJ5IHBvbGljeSlcIiwgYW5ub3RhdGlvbl92YWx1ZSkpXG5cbiMgU2hvcnRlciB0b3BpYyB0YWduYW1lcyB0byBmYWNpbGl0YXRlIGVhc2Ugb2YgcmVhZGluZyBwbG90cyAobm90ZSB0aGUgdGFncyB0aGVuXG4jIHdvbid0IGFsaWduIHdpdGggYW55IHRhZ3NldHMgYXV0b21hdGljYWxseSBleHRyYWN0ZWQgZnJvbSB0aGUgV2ViQW5ubyBwcm9qZWN0IFxuIyBmaWxlcywgaWYgSSBpbXBsZW1lbnQgc3VjaCBhdXRvbWF0aWMgZXh0cmFjdGlvbiBpbiBmdXR1cmUpXG5hbm5vdGF0aW9ucyAlPD4lIFxuICBtdXRhdGUoYW5ub3RhdGlvbl92YWx1ZSA9IFxuICAgICAgICAgICBpZmVsc2UoYW5ub3RhdGlvbl90eXBlID09IFwidG9waWNcIixcbiAgICAgICAgICAgICAgICAgIHJlY29kZShhbm5vdGF0aW9uX3ZhbHVlLFxuICAgICAgICAgICAgICAgICAgICAgICAgIGBGaW5hbmNpYWwgc3RhYmlsaXR5IC8gcG9saWN5IC8gcmVndWxhdGlvbiAvIHN1cGVydmlzaW9uYCA9IFwiRmluYW5jaWFsXCIsXG4gICAgICAgICAgICAgICAgICAgICAgICAgYENvbXBldGVuY2UgLyBpbXBsZW1lbnRhdGlvbiAvIGFwcHJvYWNoIC8gc3RhZmZgID0gXCJJbXBsZW1lbnRhdGlvblwiLFxuICAgICAgICAgICAgICAgICAgICAgICAgIGBJbnN0cnVtZW50cyAobW9uZXRhcnkgcG9saWN5KWAgPSBcIkluc3RydW1lbnRzIChNUClcIixcbiAgICAgICAgICAgICAgICAgICAgICAgICBgT2JqZWN0aXZlIChtb25ldGFyeSBwb2xpY3kpYCA9IFwiT2JqZWN0aXZlcyAoTVApXCIpLFxuICAgICAgICAgICAgICAgICAgYW5ub3RhdGlvbl92YWx1ZSkpXG5cblxuYGBgIn0= -->
+<pre class="r"><code># Old tag names that got changes partway through tagging
+annotations %&lt;&gt;% 
+  mutate(annotation_value = 
+           ifelse(annotation_type == &quot;topic&quot; &amp; annotation_value == &quot;Remit (monetary policy)&quot;, 
+                  &quot;Objective (monetary policy)&quot;, annotation_value))
+
+# Shorter topic tagnames to facilitate ease of reading plots (note the tags then
+# won't align with any tagsets automatically extracted from the WebAnno project 
+# files, if I implement such automatic extraction in future)
+annotations %&lt;&gt;% 
+  mutate(annotation_value = 
+           ifelse(annotation_type == &quot;topic&quot;,
+                  recode(annotation_value,
+                         `Financial stability / policy / regulation / supervision` = &quot;Financial&quot;,
+                         `Competence / implementation / approach / staff` = &quot;Implementation&quot;,
+                         `Instruments (monetary policy)` = &quot;Instruments (MP)&quot;,
+                         `Objective (monetary policy)` = &quot;Objectives (MP)&quot;),
+                  annotation_value))
+</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Enumerate the set of annotation types that have been applied to this corpus.</p>
+<p>Impute tags to documents with tag field left blank, where blank implies a default tag under the annotation policy.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudW5pcXVlKGFubm90YXRpb25zJGFubm90YXRpb25fdHlwZSlcbmBgYCJ9 -->
-<pre class="r"><code>unique(annotations$annotation_type)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMjIEE6IGNvbnNpZGVyIHdyYXBwaW5nIHRoZSBmb2xsb3dpbmcgaW1wdXRhdGlvbiBpbnRvIHRoZSBpbXBvcnQgZnVuY3Rpb24gLS0gXG4jIyMgY291bGQgZG8gYXQgZG9jdW1lbnQtYW5ub3RhdG9yIGxldmVsIHVzaW5nIHR5cGVzeXN0ZW0ueG1pLCBvciBhdCBwcm9qZWN0IFxuIyMjIGxldmVsIHVzaW5nIHByb2plY3Qgc3RydWN0dXJlIGZpbGVzICh0aGUganNvbj8pIG9yIGEgdXNlci1wcm92aWRlZCB0YWdsaXN0XG4jIyMgKD8pLlxuXG4jIEluIGNhc2UgdGhlcmUgYXJlIGRvY3VtZW50cyB3aGljaCAqbm8qIGFubm90YXRvciBoYXMgZXhwbGljaXRseSB0YWdnZWQsIHdlIG5lZWQgYW4gZXh0ZXJuYWwgbGlzdCBvZiBkb2N1bWVudHMgc2hvd24gdG8gYW5ub3RhdG9ycy5cblxuIyBHZXQgY29tcGxldGUgbGlzdCBvZiBkb2NfaWRzLCBhbm5vdGF0b3JzLCBhbmQgYW5ub3RhdGlvbiB0eXBlcyAoc29tZSBtYXkgbmV2ZXJcbiMgYXBwZWFyIGluIHRoZSBhbm5vdGF0aW9ucyBkb2MpLiBOT1RFOiB3b3JrYXJvdW5kIHRvIHVzZSB0aGUgZ2V0dGVyIGZ1bmN0aW9uLFxuIyByYXRoZXIgdGhhbiB0YWtlIGRpcmVjdCBmcm9tIGF0dHJpYnV0ZXMgb2YgYGFubm90YXRpb25zYCBvYmplY3QsIGJlY2F1c2UgdGhpcyBcbiMgaW5mb3JtYXRpb24gYmVpbmcgZGVsZXRlZCBmcm9tIGBhbm5vdGF0aW9uc2Agb2JqZWN0IGJ5IGRwbHlyIGdlbmVyaWNzXG5kb2NfaWRzIDwtIGdldF9kb2NfaWRzX2Zyb21fcHJvamVjdF9wYXRoKHByb2plY3RfcGF0aClcbiMgSW1wdXRlIG1pc3NpbmcgdGFncyB0byBhbm5vdGF0b3JzIHdobyBmYWlsZWQgdG8gYXBwbHkgYW55IHRhZ3MgYW5kIHNvIGRvbid0XG4jIGFwcGVhciBpbiB0aGUgZXhwbGljaXQgaW1wb3J0ZWQgdGFnc2V0LiBOb3QgeWV0IGltcGxlbWVudGVkLiBXZSBpbXBsaWNpdGx5XG4jIGFzc3VtZSB0aGF0IGFsbCBhbm5vdGF0b3JzIGhhdmUgYXBwbGllZCBhdCBsZWFzdCBvbmUgdGFnIHRvIGF0IGxlYXN0IG9uZVxuIyBkb2N1bWVudC4uLiBvciBlbHNlIHdlIGlnbm9yZSB0aGVtLlxuYW5ub3RhdG9ycyA8LSBnZXRfYW5ub3RhdG9ycyhhbm5vdGF0aW9ucykgIyBOT1RFOiB3aWxsIG1pc3MgYW55IHRvdGFsbHkgc2lsZW50IGFubm90YXRvcnNcbmFubm90YXRpb25fdHlwZXMgPC0gZ2V0X2Fubm90YXRpb25fdHlwZXMoYW5ub3RhdGlvbnMpICMgTk9URTogd2lsbCBtaXNzIGFueSB0b3RhbGx5IHVudXNlZCBhbm5ub3RhdGlvbiB0eXBlc1xuXG4jIENvbXBsZXRlIHRoZSBhbm5vdGF0aW9ucyBieSBhZGRpbmcgbWlzc2luZyBkb2N1bWVudC1hbm5vdGF0b3ItYW5ub3Rpb24gdHlwZSBcbiMgdHJpcGxlcy4gVmFsdWVzIGFyZSBmaWxsZWQgd2l0aCBOQSwgcGVuZGluZyBpbXB1dGF0aW9uIG9mIGltcGxpY2l0IHZhbHVlcyBmb3IgXG4jIG5vIHRhZyAvIGJsYW5rIHRhZ3MgXG4jIyBBOiBDb25zaWRlciB3cmFwcGluZyBpbnRvIGEgZnVuY3Rpb24gKGUuZy4gaW1wdXRlX2JsYW5rX3RhZ3MpIG9uY2Ugb3VyIHRhZ2dpbmcgcG9saWN5IGlzIHN0YW5kYXJkaXNlZFxuYW5ub3RhdGlvbnMgJTw+JSBcbiAgY29tcGxldGUoZG9jX2lkID0gZG9jX2lkcywgXG4gICAgICAgICAgIGFubm90YXRvciA9IGFubm90YXRvcnMsIFxuICAgICAgICAgICBhbm5vdGF0aW9uX3R5cGUgPSBhbm5vdGF0aW9uX3R5cGVzKVxuXG4jIFRhZ2dpbmcgaW5zdHJ1Y3Rpb25zIHdlcmUgdG8gbm90IGFwcGx5IHRhZ3MgYmV5b25kIHRoZSB0b3BpYyB0YWcgaWYgdGhhdCB3YXMgdGhlIGRlZmF1bHQgYmxhbmsgKGltcGxpY2l0bHkgXCJOb3QgQm9FXCIpIHRhZy4gVGhlcmVmb3JlIHRhZyBkZWZhdWx0cyBmb3Igb3RoZXIgdGFncyBzaG91bGQgb25seSBiZSBhcHBsaWVkIHRvIHRoZSBzdWJzZXQgd2l0aCBleHBsaWNpdCBCb0UgdG9waWMgdGFncy4gV2UgdGhlcmVmb3JlIHNwbGl0IHRoZSBkYXRhLmZyYW1lIHRvIGltcGxlbWVudCB0aGlzIHNwbGl0IHBvbGljeSwgYW5kIHRoZW4gcmVjb21iaW5lZC4gXG5hbm5vdGF0aW9ucyAlPD4lIFxuICBncm91cF9ieShkb2NfaWQsIGFubm90YXRvcikgJT4lIFxuICBtdXRhdGUoQm9FX3RvcGljID0gXG4gICAgICAgICAgIHN1bShhbm5vdGF0aW9uX3R5cGUgPT0gXCJ0b3BpY1wiICYgIWlzLm5hKGFubm90YXRpb25fdmFsdWUpKSA+IDApICU+JSBcbiAgdW5ncm91cCgpXG5cbiMjIyBXQVJOSU5HOiBIYXJkd2lyZWQgZmllbGQgbmFtZXMgYW5kIGRlZmF1bHQgdmFsdWVzXG5kZWZhdWx0c19saXN0X0JvRSA8LSAgIFxuICBsaXN0KHRvcGljID0gXCJOb3QgQm9FXCIsXG4gICAgICAgbmF0dXJlID0gTkEsICMjIyBROiBEb2VzIHRoZSBibGFuayB0YWcgKGNvbXBsZW1lbnQgb2YgdGhlIG5hbWVkIHRhZ3MpIGhhdmUgYSB1bmlxdWUgaW50ZXJwcmV0YXRpb24gZm9yIHRoaXMgZmllbGQ/XG4gICAgICAgc2VudGltZW50ID0gXCJOZXV0cmFsXCIsXG4gICAgICAgbGV2ZWxfY2hhbmdlID0gTkEpICMjIyBROiBJcyB0aGlzIGdvaW5nIHRvIGJlIGdpdmVuIGEgKGJsYW5rKSBkZWZhdWx0PyBcblxuYW5ub3RhdGlvbnNfQm9FIDwtIFxuICBhbm5vdGF0aW9ucyAlPiUgXG4gIGZpbHRlcihCb0VfdG9waWMpICU+JSBcbiAgc3ByZWFkKGFubm90YXRpb25fdHlwZSwgYW5ub3RhdGlvbl92YWx1ZSkgJT4lIFxuICBmaWx0ZXIoIWlzLm5hKGlkX2Fubm90YXRpb24pKSAlPiUgIyBkcm9wIHNwdXJpb3VzIHJvd3MgdGhhdCBzcHJlYWQgaGFzIGludHJvZHVjZWRcbiAgcmVwbGFjZV9uYShkZWZhdWx0c19saXN0X0JvRSkgJT4lIFxuICBnYXRoZXJfKFwiYW5ub3RhdGlvbl90eXBlXCIsIFwiYW5ub3RhdGlvbl92YWx1ZVwiLCBhbm5vdGF0aW9uX3R5cGVzKVxuXG5hbm5vdGF0aW9uc19ub25fQm9FIDwtIFxuICBhbm5vdGF0aW9ucyAlPiUgXG4gIGZpbHRlcighQm9FX3RvcGljKSAlPiUgXG4gIG11dGF0ZShhbm5vdGF0aW9uX3ZhbHVlID0gaWZlbHNlKGFubm90YXRpb25fdHlwZSA9PSBcInRvcGljXCIgJiBpcy5uYShhbm5vdGF0aW9uX3ZhbHVlKSwgZGVmYXVsdHNfbGlzdF9Cb0UkdG9waWMsIGFubm90YXRpb25fdmFsdWUpKVxuXG5zdG9waWZub3QoICMgY2hlY2sgdGhhdCB3aGVyZSB0b3BpYyBpcyBibGFuaywgbm8gb3RoZXIgdGFncyBoYXZlIGJlZW4gYXBwbGllZFxuICBhbm5vdGF0aW9uc19ub25fQm9FICU+JSBcbiAgZmlsdGVyKGFubm90YXRpb25fdHlwZSAhPSBcInRvcGljXCIpICU+JSBcbiAgZmlsdGVyKCFpcy5uYShhbm5vdGF0aW9uX3ZhbHVlKSkgJT4lIFxuICBucm93KCkgPT0gMClcblxuYW5ub3RhdGlvbnMgPC0gXG4gIGJpbmRfcm93cyhhbm5vdGF0aW9uc19Cb0UsIGFubm90YXRpb25zX25vbl9Cb0UpICU+JSBcbiAgYXJyYW5nZShkb2NfaWQsIGFubm90YXRvciwgaWRfYW5ub3RhdGlvbiwgYW5ub3RhdGlvbl90eXBlLCBhbm5vdGF0aW9uX3ZhbHVlKVxuICBcbmBgYCJ9 -->
+<pre class="r"><code>### A: consider wrapping the following imputation into the import function -- 
+### could do at document-annotator level using typesystem.xmi, or at project 
+### level using project structure files (the json?) or a user-provided taglist
+### (?).
+
+# In case there are documents which *no* annotator has explicitly tagged, we need an external list of documents shown to annotators.
+
+# Get complete list of doc_ids, annotators, and annotation types (some may never
+# appear in the annotations doc). NOTE: workaround to use the getter function,
+# rather than take direct from attributes of `annotations` object, because this 
+# information being deleted from `annotations` object by dplyr generics
+doc_ids &lt;- get_doc_ids_from_project_path(project_path)
+# Impute missing tags to annotators who failed to apply any tags and so don't
+# appear in the explicit imported tagset. Not yet implemented. We implicitly
+# assume that all annotators have applied at least one tag to at least one
+# document... or else we ignore them.
+annotators &lt;- get_annotators(annotations) # NOTE: will miss any totally silent annotators
+annotation_types &lt;- get_annotation_types(annotations) # NOTE: will miss any totally unused annnotation types
+
+# Complete the annotations by adding missing document-annotator-annotion type 
+# triples. Values are filled with NA, pending imputation of implicit values for 
+# no tag / blank tags 
+## A: Consider wrapping into a function (e.g. impute_blank_tags) once our tagging policy is standardised
+annotations %&lt;&gt;% 
+  complete(doc_id = doc_ids, 
+           annotator = annotators, 
+           annotation_type = annotation_types)
+
+# Tagging instructions were to not apply tags beyond the topic tag if that was the default blank (implicitly &quot;Not BoE&quot;) tag. Therefore tag defaults for other tags should only be applied to the subset with explicit BoE topic tags. We therefore split the data.frame to implement this split policy, and then recombined. 
+annotations %&lt;&gt;% 
+  group_by(doc_id, annotator) %&gt;% 
+  mutate(BoE_topic = 
+           sum(annotation_type == &quot;topic&quot; &amp; !is.na(annotation_value)) &gt; 0) %&gt;% 
+  ungroup()
+
+### WARNING: Hardwired field names and default values
+defaults_list_BoE &lt;-   
+  list(topic = &quot;Not BoE&quot;,
+       nature = NA, ### Q: Does the blank tag (complement of the named tags) have a unique interpretation for this field?
+       sentiment = &quot;Neutral&quot;,
+       level_change = NA) ### Q: Is this going to be given a (blank) default? 
+
+annotations_BoE &lt;- 
+  annotations %&gt;% 
+  filter(BoE_topic) %&gt;% 
+  spread(annotation_type, annotation_value) %&gt;% 
+  filter(!is.na(id_annotation)) %&gt;% # drop spurious rows that spread has introduced
+  replace_na(defaults_list_BoE) %&gt;% 
+  gather_(&quot;annotation_type&quot;, &quot;annotation_value&quot;, annotation_types)
+
+annotations_non_BoE &lt;- 
+  annotations %&gt;% 
+  filter(!BoE_topic) %&gt;% 
+  mutate(annotation_value = ifelse(annotation_type == &quot;topic&quot; &amp; is.na(annotation_value), defaults_list_BoE$topic, annotation_value))
+
+stopifnot( # check that where topic is blank, no other tags have been applied
+  annotations_non_BoE %&gt;% 
+  filter(annotation_type != &quot;topic&quot;) %&gt;% 
+  filter(!is.na(annotation_value)) %&gt;% 
+  nrow() == 0)
+
+annotations &lt;- 
+  bind_rows(annotations_BoE, annotations_non_BoE) %&gt;% 
+  arrange(doc_id, annotator, id_annotation, annotation_type, annotation_value)
+  </code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -226,296 +308,190 @@ annotations</code></pre>
 <p>Extract topics tags.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMjIEE6IHNlZSBpZiBjYW4gbWFwIG92ZXIgZGlmZmVyZW50IGFubm90YXRpb25fdHlwZXMsIHJhdGhlciB0aGFuIHJlcGVhdGluZyB0aGlzIHBhdHRlcm4gZm9yIGVhY2hcbnRvcGljcyA8LSBcbiAgYW5ub3RhdGlvbnMgJT4lIFxuICBmaWx0ZXIoYW5ub3RhdGlvbl90eXBlID09IFwidG9waWNcIikgJT4lIFxuICBzZWxlY3QoZG9jX2lkLCBpZF9hbm5vdGF0aW9uLCBhbm5vdGF0b3IsIGFubm90YXRpb25fdmFsdWUpXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMjIEE6IHNlZSBpZiBjYW4gbWFwIG92ZXIgZGlmZmVyZW50IGFubm90YXRpb25fdHlwZXMsIHJhdGhlciB0aGFuIHJlcGVhdGluZyB0aGlzIHBhdHRlcm4gZm9yIGVhY2hcbnRvcGljcyA8LSBcbiAgYW5ub3RhdGlvbnMgJT4lIFxuICBmaWx0ZXIoYW5ub3RhdGlvbl90eXBlID09IFwidG9waWNcIikgIyAlPiUgXG4gICMgc2VsZWN0KGRvY19pZCwgaWRfYW5ub3RhdGlvbiwgYW5ub3RhdG9yLCBhbm5vdGF0aW9uX3ZhbHVlKVxuYGBgIn0= -->
 <pre class="r"><code>### A: see if can map over different annotation_types, rather than repeating this pattern for each
 topics &lt;- 
   annotations %&gt;% 
-  filter(annotation_type == &quot;topic&quot;) %&gt;% 
-  select(doc_id, id_annotation, annotator, annotation_value)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Enumerate topics used (not necessarily the full set available for use).</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2V0X3RhZ3NldF91c2VkKHRvcGljcylcbiMgdG9waWNzX2xpc3QgPC0gdW5pcXVlKHRvcGljcyRhbm5vdGF0aW9uX3ZhbHVlKVxuIyB0b3BpY3NfbGlzdFxuYGBgIn0= -->
-<pre class="r"><code>get_tagset_used(topics)
-# topics_list &lt;- unique(topics$annotation_value)
-# topics_list</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<div id="marginal-distribution-by-annotator" class="section level2">
-<h2><span class="header-section-number">3.1</span> Marginal distribution by annotator</h2>
-<p>Calculate within-annotator topic share.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMjIE5vdyBkb25lIGRpcmVjdGx5IGluIGdncGxvdFxuIyB0b3BpY19zaGFyZXMgPC0gXG4jICAgdG9waWNzICU+JVxuIyAgIGdyb3VwX2J5KGFubm90YXRvciwgYW5ub3RhdGlvbl92YWx1ZSkgJT4lIFxuIyAgIHN1bW1hcmlzZShudGFnID0gbigpKSAlPiUgXG4jICAgZ3JvdXBfYnkoYW5ub3RhdG9yKSAlPiUgXG4jICAgbXV0YXRlKHRvcGljX3NoYXJlID0gbnRhZyAvIHN1bShudGFnKSlcbmBgYCJ9 -->
-<pre class="r"><code>### Now done directly in ggplot
-# topic_shares &lt;- 
-#   topics %&gt;%
-#   group_by(annotator, annotation_value) %&gt;% 
-#   summarise(ntag = n()) %&gt;% 
-#   group_by(annotator) %&gt;% 
-#   mutate(topic_share = ntag / sum(ntag))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Add the mean over annotators.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB0b3BpY19zaGFyZXNfYWxsIDwtIFxuIyAgIHRvcGljcyAlPiUgXG4jICAgZ3JvdXBfYnkoYW5ub3RhdGlvbl92YWx1ZSkgJT4lIFxuIyAgIHN1bW1hcmlzZShudGFnID0gbigpKSAlPiUgXG4jICAgbXV0YXRlKHRvcGljX3NoYXJlID0gbnRhZyAvIHN1bShudGFnKSxcbiMgICAgICAgICAgYW5ub3RhdG9yID0gXCIoYWxsKVwiKVxuIyBcbiMgdG9waWNfc2hhcmVzICU8PiUgXG4jICAgYmluZF9yb3dzKHRvcGljX3NoYXJlc19hbGwpXG4jIFxuIyAjIG9yZGVyIHRvcGljcyBpbiBkZXNjZW5kaW5nIG9yZGVyIG9mIGZyZXF1ZW5jeSBpbiAoYWxsKVxuIyB0b3BpY3Nfb3JkZXJlZCA8LSBcbiMgICB0b3BpY19zaGFyZXNfYWxsICU+JSBcbiMgICBhcnJhbmdlKGRlc2ModG9waWNfc2hhcmUpKSAlPiUgXG4jICAgc2VsZWN0KGFubm90YXRpb25fdmFsdWUpICU+JSBcbiMgICB1bmxpc3QoKVxuIyBcbiMgdG9waWNfc2hhcmVzXG5cbiMgU2ltcGxlciBjb2RlIHRvIG9yZGVyIHRvcGljcyBieSBvdmVyYWxsIHBvcHVsYXJpdHlcbnRhZ3Nfb3JkZXJlZF9ieV9kZWNyZWFzaW5nX3BvcHVsYXJpdHkgPC0gXG4gIHRvcGljcyAlPiUgXG4gIGdyb3VwX2J5KGFubm90YXRpb25fdmFsdWUpICU+JSBcbiAgc3VtbWFyaXNlKG4gPSBuKCkpICU+JSBcbiAgYXJyYW5nZShkZXNjKG4pKSAlPiUgXG4gIHNlbGVjdChhbm5vdGF0aW9uX3ZhbHVlKSAlPiUgXG4gIHVubGlzdCh1c2UubmFtZXMgPSBGQUxTRSlcblxuYGBgIn0= -->
-<pre class="r"><code># topic_shares_all &lt;- 
-#   topics %&gt;% 
-#   group_by(annotation_value) %&gt;% 
-#   summarise(ntag = n()) %&gt;% 
-#   mutate(topic_share = ntag / sum(ntag),
-#          annotator = &quot;(all)&quot;)
-# 
-# topic_shares %&lt;&gt;% 
-#   bind_rows(topic_shares_all)
-# 
-# # order topics in descending order of frequency in (all)
-# topics_ordered &lt;- 
-#   topic_shares_all %&gt;% 
-#   arrange(desc(topic_share)) %&gt;% 
-#   select(annotation_value) %&gt;% 
-#   unlist()
-# 
-# topic_shares
-
-# Simpler code to order topics by overall popularity
-tags_ordered_by_decreasing_popularity &lt;- 
-  topics %&gt;% 
-  group_by(annotation_value) %&gt;% 
-  summarise(n = n()) %&gt;% 
-  arrange(desc(n)) %&gt;% 
-  select(annotation_value) %&gt;% 
-  unlist(use.names = FALSE)
-</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Visualise.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB0b3BpY19zaGFyZXMgJT4lICBcbiMgICBnZ3Bsb3QoYWVzKHggPSBhbm5vdGF0aW9uX3ZhbHVlKSkgK1xuIyAgIGdlb21fYmFyKGFlcyh5ID0gdG9waWNfc2hhcmUpLCBzdGF0ID0gXCJpZGVudGl0eVwiKSArXG4jICAgZmFjZXRfZ3JpZChhbm5vdGF0b3IgfiAuKSArXG4jICAgdGhlbWUoYXhpcy50ZXh0LnggPSBlbGVtZW50X3RleHQoYW5nbGUgPSA5MCwgaGp1c3QgPSAwLjUsIHZqdXN0ID0gMC41KSkgK1xuIyAgIHNjYWxlX3hfZGlzY3JldGUobmFtZSA9IE5VTEwsXG4jICAgICAgICAgICAgICAgICAgICBsYWJlbHMgPSBmdW5jdGlvbih4KSBzdHJfd3JhcCh4LCB3aWR0aCA9IDE1KSxcbiMgICAgICAgICAgICAgICAgICAgIGxpbWl0cyA9IHRvcGljc19vcmRlcmVkKSArXG4jICAgc2NhbGVfeV9jb250aW51b3VzKG5hbWUgPSBcIlNoYXJlIG9mIGFsbCB0b3BpYyB0YWdzIGFwcGxpZWRcIilcblxuIyB0b3BpY3MgJT4lXG4jICAgZ2dwbG90KGFlcyh4ID0gYW5ub3RhdGlvbl92YWx1ZSkpICtcbiMgICBnZW9tX2JhcihhZXMoeSA9IC4ucHJvcC4uLCBncm91cCA9IDEpKSArICMgZ3JvdXAgPSAxIG5lZWRlZCB0byBnZXQgcHJvcG9ydGlvbnMgd2l0aGluIGFubm90YXRvciwgcmF0aGVyIHRoYW4gYXMgcHJvcG9ydGlvbiBvZiBtYXJnaW4gXG4jICAgZmFjZXRfZ3JpZChhbm5vdGF0b3IgfiAuLCBtYXJnaW5zID0gVFJVRSkgK1xuIyAgIHRoZW1lKGF4aXMudGV4dC54ID0gZWxlbWVudF90ZXh0KGFuZ2xlID0gOTAsIGhqdXN0ID0gMC41LCB2anVzdCA9IDAuNSkpICtcbiMgICBzY2FsZV94X2Rpc2NyZXRlKG5hbWUgPSBOVUxMLFxuIyAgICAgICAgICAgICAgICAgICAgbGFiZWxzID0gZnVuY3Rpb24oeCkgc3RyX3dyYXAoeCwgd2lkdGggPSAxNSksXG4jICAgICAgICAgICAgICAgICAgICBsaW1pdHMgPSB0YWdzX29yZGVyZWRfYnlfZGVjcmVhc2luZ19wb3B1bGFyaXR5KSArXG4jICAgc2NhbGVfeV9jb250aW51b3VzKG5hbWUgPSBcIlNoYXJlIG9mIHRhZ3MgYnkgYW5ub3RhdG9yXCIpXG5cbmdldF90YWdzX29yZGVyZWRfYnlfZGVjcmVhc2luZ19wb3B1bGFyaXR5IDwtIGZ1bmN0aW9uKGFubm90YXRpb25zLCB0YWdzID0gTlVMTCkge1xuICAjIGdldCAoc29ydGVkKSBsaXN0IG9mIHRhZ3MgdXNlZCBpbiBhbm5vdGF0aW9uc1xuICB0YWdzX3VzZWQgPC0gXG4gICAgICBhbm5vdGF0aW9ucyAlPiUgXG4gICAgICBncm91cF9ieShhbm5vdGF0aW9uX3ZhbHVlKSAlPiUgXG4gICAgICBzdW1tYXJpc2UobiA9IG4oKSkgJT4lIFxuICAgICAgYXJyYW5nZShkZXNjKG4pKSAlPiUgXG4gICAgICBzZWxlY3QoYW5ub3RhdGlvbl92YWx1ZSkgJT4lIFxuICAgICAgdW5saXN0KHVzZS5uYW1lcyA9IEZBTFNFKVxuICAjIGlmIGFuIGV4cGxpY2l0IGxpc3Qgb2YgcG9zc2libGUgdGFncyBpcyBnaXZlbiB0aGVuIGNoZWNrIGZvci4uLlxuICBpZiAoIWlzLm51bGwodGFncykpIHtcbiAgICAjIC4uLiB0YWdzIHVzZWQgaW4gdGhlIGFubm90YXRpb25zIHRoYXQgYXJlbid0IGFsc28gaW4gYHRhZ3NgXG4gICAgcHJldHR5X3ByaW50X3RhZ3MgPC0gZnVuY3Rpb24odGFncykgcGFzdGUwKHRhZ3NfdW5leHBlY3RlZCwgXCJcIiwgY29sbGFwc2UgPSBcIlxcblwiKVxuICAgIHRhZ3NfdW5leHBlY3RlZCA8LSBzZXRkaWZmKHRhZ3NfdXNlZCwgdGFncylcbiAgICBpZiAobGVuZ3RoKHRhZ3NfdW5leHBlY3RlZCkgPiAwKSB3YXJuaW5nKFwiVGFncyBpbiBgYW5ub3RhdGlvbnNgIHRoYXQgd2VyZSBub3QgaW4gYHRhZ3NgOiBcIiwgcHJldHR5X3ByaW50X3RhZ3ModGFnc191bmV4cGVjdGVkKSlcbiAgICAjIC4uLiB1bnVzZWQgdGFnc1xuICAgIHRhZ3NfdW51c2VkIDwtIHNldGRpZmYodGFncywgdGFnc191c2VkKVxuICAgIGlmIChsZW5ndGgodGFnc191bmV4cGVjdGVkKSA+IDApIHdhcm5pbmcoXCJUYWdzIGluIGB0YWdzYCB0aGF0IHdlcmUgbm90IHVzZWQgaW4gYGFubm90YXRpb25zYDogXCIsIHByZXR0eV9wcmludF90YWdzKHRhZ3NfdW51c2VkKSlcbiAgICB0YWdzIDwtIGModGFnc191c2VkLCB0YWdzX3VudXNlZClcbiAgfSBlbHNlIHtcbiAgICB0YWdzIDwtIHRhZ3NfdXNlZFxuICB9IFxuICB0YWdzXG59XG5cbnBsb3RfbWFyZ2luYWxfdGFnX3VzZV9ieV9hbm5vdGF0b3IgPC0gXG4gIGZ1bmN0aW9uKGFubm90YXRpb25zLCB0YWdzID0gTlVMTCwgdGFnX29yZGVyID0gYyhcInZhbHVlXCIsIFwicG9wdWxhcml0eVwiKSkge1xuICBcbiAgdGFnX29yZGVyIDwtIG1hdGNoLmFyZyh0YWdfb3JkZXIpXG4gIHRhZ3Nfb3JkZXJlZCA8LSBzd2l0Y2godGFnX29yZGVyLCBcbiAgICAgICAgICAgICAgICAgICAgICAgICBwb3B1bGFyaXR5ID0gZ2V0X3RhZ3Nfb3JkZXJlZF9ieV9kZWNyZWFzaW5nX3BvcHVsYXJpdHkoYW5ub3RhdGlvbnMpLFxuICAgICAgICAgICAgICAgICAgICAgICAgIHZhbHVlID0gc29ydCh1bmlxdWUoYW5ub3RhdGlvbnMkYW5ub3RhdGlvbl92YWx1ZSkpKSAgXG4gIFxuICBhbm5vdGF0aW9ucyAlPiVcbiAgICBnZ3Bsb3QoYWVzKHggPSBhbm5vdGF0aW9uX3ZhbHVlKSkgK1xuICAgIGdlb21fYmFyKGFlcyh5ID0gLi5wcm9wLi4sIGdyb3VwID0gMSkpICsgIyBncm91cCA9IDEgbmVlZGVkIHRvIGdldCBwcm9wb3J0aW9ucyB3aXRoaW4gYW5ub3RhdG9yLCByYXRoZXIgdGhhbiBhcyBwcm9wb3J0aW9uIG9mIG1hcmdpbiBcbiAgICBmYWNldF9ncmlkKGFubm90YXRvciB+IC4sIG1hcmdpbnMgPSBUUlVFKSArXG4gICAgdGhlbWUoYXhpcy50ZXh0LnggPSBlbGVtZW50X3RleHQoYW5nbGUgPSA5MCwgaGp1c3QgPSAwLjUsIHZqdXN0ID0gMC41KSkgK1xuICAgIHNjYWxlX3hfZGlzY3JldGUobmFtZSA9IE5VTEwsXG4gICAgICAgICAgICAgICAgICAgICBsYWJlbHMgPSBmdW5jdGlvbih4KSBzdHJfd3JhcCh4LCB3aWR0aCA9IDE1KSxcbiAgICAgICAgICAgICAgICAgICAgIGxpbWl0cyA9IHRhZ3Nfb3JkZXJlZCkgK1xuICAgIHNjYWxlX3lfY29udGludW91cyhuYW1lID0gXCJTaGFyZSBvZiB0YWdzIGJ5IGFubm90YXRvclwiKVxufVxuYGBgIn0= -->
-<pre class="r"><code># topic_shares %&gt;%  
-#   ggplot(aes(x = annotation_value)) +
-#   geom_bar(aes(y = topic_share), stat = &quot;identity&quot;) +
-#   facet_grid(annotator ~ .) +
-#   theme(axis.text.x = element_text(angle = 90, hjust = 0.5, vjust = 0.5)) +
-#   scale_x_discrete(name = NULL,
-#                    labels = function(x) str_wrap(x, width = 15),
-#                    limits = topics_ordered) +
-#   scale_y_continuous(name = &quot;Share of all topic tags applied&quot;)
-
-# topics %&gt;%
-#   ggplot(aes(x = annotation_value)) +
-#   geom_bar(aes(y = ..prop.., group = 1)) + # group = 1 needed to get proportions within annotator, rather than as proportion of margin 
-#   facet_grid(annotator ~ ., margins = TRUE) +
-#   theme(axis.text.x = element_text(angle = 90, hjust = 0.5, vjust = 0.5)) +
-#   scale_x_discrete(name = NULL,
-#                    labels = function(x) str_wrap(x, width = 15),
-#                    limits = tags_ordered_by_decreasing_popularity) +
-#   scale_y_continuous(name = &quot;Share of tags by annotator&quot;)
-
-get_tags_ordered_by_decreasing_popularity &lt;- function(annotations, tags = NULL) {
-  # get (sorted) list of tags used in annotations
-  tags_used &lt;- 
-      annotations %&gt;% 
-      group_by(annotation_value) %&gt;% 
-      summarise(n = n()) %&gt;% 
-      arrange(desc(n)) %&gt;% 
-      select(annotation_value) %&gt;% 
-      unlist(use.names = FALSE)
-  # if an explicit list of possible tags is given then check for...
-  if (!is.null(tags)) {
-    # ... tags used in the annotations that aren't also in `tags`
-    pretty_print_tags &lt;- function(tags) paste0(tags_unexpected, &quot;&quot;, collapse = &quot;\n&quot;)
-    tags_unexpected &lt;- setdiff(tags_used, tags)
-    if (length(tags_unexpected) &gt; 0) warning(&quot;Tags in `annotations` that were not in `tags`: &quot;, pretty_print_tags(tags_unexpected))
-    # ... unused tags
-    tags_unused &lt;- setdiff(tags, tags_used)
-    if (length(tags_unexpected) &gt; 0) warning(&quot;Tags in `tags` that were not used in `annotations`: &quot;, pretty_print_tags(tags_unused))
-    tags &lt;- c(tags_used, tags_unused)
-  } else {
-    tags &lt;- tags_used
-  } 
-  tags
-}
-
-plot_marginal_tag_use_by_annotator &lt;- 
-  function(annotations, tags = NULL, tag_order = c(&quot;value&quot;, &quot;popularity&quot;)) {
-  
-  tag_order &lt;- match.arg(tag_order)
-  tags_ordered &lt;- switch(tag_order, 
-                         popularity = get_tags_ordered_by_decreasing_popularity(annotations),
-                         value = sort(unique(annotations$annotation_value)))  
-  
-  annotations %&gt;%
-    ggplot(aes(x = annotation_value)) +
-    geom_bar(aes(y = ..prop.., group = 1)) + # group = 1 needed to get proportions within annotator, rather than as proportion of margin 
-    facet_grid(annotator ~ ., margins = TRUE) +
-    theme(axis.text.x = element_text(angle = 90, hjust = 0.5, vjust = 0.5)) +
-    scale_x_discrete(name = NULL,
-                     labels = function(x) str_wrap(x, width = 15),
-                     limits = tags_ordered) +
-    scale_y_continuous(name = &quot;Share of tags by annotator&quot;)
-}</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Dropping non-BoE tags…</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMjIFdBUk5JTkchIEhhcmR3aXJlZCB0b3BpYyB0YWcgc3RyaW5nc1xubm9uX0JvRV90YWdzIDwtIGMoXCJHb3Zlcm5tZW50XCIsIFwiTm90IEJvRSBvciBnb3Zlcm5tZW50XCIpXG50b3BpY19zaGFyZXMgJT4lICBcbiAgZmlsdGVyKCEoYW5ub3RhdGlvbl92YWx1ZSAlaW4lIG5vbl9Cb0VfdGFncykpICU+JSBcbiAgZ2dwbG90KGFlcyh4ID0gYW5ub3RhdGlvbl92YWx1ZSkpICtcbiAgZ2VvbV9iYXIoYWVzKHkgPSB0b3BpY19zaGFyZSksIHN0YXQgPSBcImlkZW50aXR5XCIpICtcbiAgZmFjZXRfZ3JpZChhbm5vdGF0b3IgfiAuKSArXG4gIHRoZW1lKGF4aXMudGV4dC54ID0gZWxlbWVudF90ZXh0KGFuZ2xlID0gOTAsIGhqdXN0ID0gMC41LCB2anVzdCA9IDAuNSkpICtcbiAgc2NhbGVfeF9kaXNjcmV0ZShuYW1lID0gTlVMTCxcbiAgICAgICAgICAgICAgICAgICBsYWJlbHMgPSBmdW5jdGlvbih4KSBzdHJfd3JhcCh4LCB3aWR0aCA9IDE1KSxcbiAgICAgICAgICAgICAgICAgICBsaW1pdHMgPSB0b3BpY3Nfb3JkZXJlZFshKHRvcGljc19vcmRlcmVkICVpbiUgbm9uX0JvRV90YWdzKV0pICtcbiAgc2NhbGVfeV9jb250aW51b3VzKG5hbWUgPSBcIlNoYXJlIG9mIGFsbCB0b3BpYyB0YWdzIGFwcGxpZWRcIilcbmBgYCJ9 -->
-<pre class="r"><code>### WARNING! Hardwired topic tag strings
-non_BoE_tags &lt;- c(&quot;Government&quot;, &quot;Not BoE or government&quot;)
-topic_shares %&gt;%  
-  filter(!(annotation_value %in% non_BoE_tags)) %&gt;% 
-  ggplot(aes(x = annotation_value)) +
-  geom_bar(aes(y = topic_share), stat = &quot;identity&quot;) +
-  facet_grid(annotator ~ .) +
-  theme(axis.text.x = element_text(angle = 90, hjust = 0.5, vjust = 0.5)) +
-  scale_x_discrete(name = NULL,
-                   labels = function(x) str_wrap(x, width = 15),
-                   limits = topics_ordered[!(topics_ordered %in% non_BoE_tags)]) +
-  scale_y_continuous(name = &quot;Share of all topic tags applied&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-</div>
-<div id="co-occurence-of-tags-within-annotator-multiple-tagging" class="section level2">
-<h2><span class="header-section-number">3.2</span> Co-occurence of tags within annotator (multiple tagging)</h2>
-<p>Reusable plotting function.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBOb3RlOiBjb3VsZCBtYWtlIHRoZSBiZWxvdyBsZXNzIHNwZWNpZmljIHRvIGFubm90YXRpb25cblxuYW5ub3RhdG9yc19zdWJzZXQgPC0gZnVuY3Rpb24oYW5ub3RhdGlvbnMsIGFubm90YXRvcnMgPSBOVUxMKSB7XG4gICMgRGVmYXVsdCB0byBhbGwgYW5ub3RhdG9yc1xuICAjIFdBUk5JTkchIEhhcmR3aXJlZCBjb2x1bW4gbmFtZSBcImFubm90YXRvclwiXG4gIGlmICghaXMubnVsbChhbm5vdGF0b3JzKSkgZGYgPC0gZHBseXI6OmZpbHRlcihhbm5vdGF0aW9ucywgYW5ub3RhdG9yICVpbiUgYW5ub3RhdG9ycylcbiAgZWxzZSBkZiA8LSBhbm5vdGF0aW9uc1xuICBkZlxufVxuXG4jIFRha2UgYSBsaXN0IG9mIGFubm90YXRpb25zLCBieSBkb2N1bWVudCwgYW5ub3RhdG9yLCBhbmQgYW5ub3RhdGlvbiB2YWx1ZSAodGFnKSwgYW5kIGNhbGN1bGF0ZSBhZ3JlZW1lbnQgYW1vbmcgYSBzcGVjaWZpZWQgc3Vic2V0IG9mIGFubm90YXRvcnMuXG4jIyMgUTogU2hvdWxkIHdlIGNvbXBsZXRlIG1pc3NpbmcgcGFpcnMgd2l0aCB6ZXJvcz8gT3IgcHJvdmlkZSBhbiBvcHRpb24gdG8gZG8gc28sIHdpdGggY29ycmVzcG9uZGluZyBmdW5jdGlvbiBhcmd1bWVudD9cbmFncmVlbWVudCA8LSBmdW5jdGlvbihhbm5vdGF0aW9ucywgYW5ub3RhdG9ycyA9IE5VTEwpIHtcbiAgZGYgPC0gYW5ub3RhdG9yc19zdWJzZXQoYW5ub3RhdGlvbnMsIGFubm90YXRvcnMpXG4gICMgV0FSTklORyEgSGFyZHdpcmVkIGNvbHVtbiBuYW1lIFwiYW5ub3RhdGlvbl92YWx1ZVwiLCBcImRvY19pZFwiXG4gIHdpZHlyOjpwYWlyd2lzZV9jb3VudChkZiwgYW5ub3RhdGlvbl92YWx1ZSwgZG9jX2lkLCBkaWFnID0gVFJVRSlcbn1cblxuZ2V0X2Fubm90YXRvcnMgPC0gZnVuY3Rpb24oYW5ub3RhdGlvbnMpIHVuaXF1ZShhbm5vdGF0aW9ucyRhbm5vdGF0b3IpXG5cbiMjIyBBOiBjaGVjayB0aGF0IGl0ZW0xIGNvcnJlc3BvbmRzIHRvIGFubm90YXRvcjEgYW5kIGxpa2V3aXNlIGZvciAyXG5hZ3JlZW1lbnRfcGFpciA8LSBmdW5jdGlvbihhbm5vdGF0aW9ucywgYW5ub3RhdG9ycykge1xuICBzdG9waWZub3QoaXMuY2hhcmFjdGVyKGFubm90YXRvcnMpICYmIGxlbmd0aChhbm5vdGF0b3JzKSA9PSAyKVxuICBkZiA8LSBhZ3JlZW1lbnQoYW5ub3RhdGlvbnMsIGFubm90YXRvcnMpXG4gIGRmJGFubm90YXRvcjEgPSBhbm5vdGF0b3JzWzFdXG4gIGRmJGFubm90YXRvcjIgPSBhbm5vdGF0b3JzWzJdXG4gIGRmXG59XG5cbiMgUm93LWJpbmQgdG9nZXRoZXIgYWxsIHBhaXJ3aXNlIGNvbWJpbmF0aW9ucyBvZiBhbm5vdGF0b3JzLCBwbHVzIG9wdGlvbmFsbHkgbWFyZ2luc1xuYWdyZWVtZW50X3BhaXJ3aXNlIDwtIGZ1bmN0aW9uKGFubm90YXRpb25zLCBhbm5vdGF0b3JzID0gTlVMTCwgZGlhZyA9IFRSVUUpIHtcbiAgIyBJZiBhbiBhbm5vdGF0b3IgaXMgbGlzdGVkIGluIHRoZSBhbm5vdGF0b3JzIGFyZ3VtZW50LCBidXQgZG9lc24ndCBhcHBlYXIgaW4gdGhlIGFubm90YXRpb25zIGRhdGFzZXQsIHRoYXQgYW5ub3RhdG9yIHdpbGwgYmUgaW1wdXRlZCB0byBleGlzdCBhbmQgaW1wbGljaXRseSBoYXZlIFxuICBkZiA8LSBhbm5vdGF0b3JzX3N1YnNldChhbm5vdGF0aW9ucywgYW5ub3RhdG9ycylcbiAgIyBJZiBhbm5vdGF0b3JzIGFyZ3VtZW50IGlzIGxlZnQgTlVMTCB0aGVuIGluZmVyIGFubm90YXRvcnMgbGlzdCBmcm9tIGFubm90YXRpb25zIGRhdGFmcmFtZSAoc28gd29uJ3Qgc2VlIGFubm90YXRvcnMgd2hvIGV4aXN0IGJ1dCBkaWRuJ3QgY29udHJpYnV0ZSBhbnkgYW5ub3RhdGlvbnMpXG4gIGlmIChpcy5udWxsKGFubm90YXRvcnMpKSBhbm5vdGF0b3JzIDwtIGdldF9hbm5vdGF0b3JzKGFubm90YXRpb25zKVxuICBhbm5vdGF0b3JfcGFpcnMgPC0gXG4gICAgaWYgKGRpYWcpIHtcbiAgICAgIHRlbXAgPC0gZ3Rvb2xzOjpwZXJtdXRhdGlvbnMobGVuZ3RoKGFubm90YXRvcnMpLCAyLCBhbm5vdGF0b3JzLCByZXBlYXRzLmFsbG93ZWQgPSBUUlVFKVxuICAgICAgc3BsaXQodGVtcCwgcm93KHRlbXApKX0gZWxzZSBjb21ibihhbm5vdGF0b3JzLCAyLCBzaW1wbGlmeSA9IEZBTFNFKVxuICBwdXJycjo6bWFwX2RmKGFubm90YXRvcl9wYWlycywgfmFncmVlbWVudF9wYWlyKGFubm90YXRpb25zLCAueCkpIFxufVxuXG4jIEJ1YmJsZSBwbG90IG9uIHNxdWFyZSBtYXRyaXggb2YgcG90ZW50aWFsIGFubm90YXRpb24gdmFsdWVzIFxuY3Jvc3NwbG90IDwtIGZ1bmN0aW9uKGRmLCB0YWdzX29yZGVyZWQpIHtcbiAgIyBXQVJOSU5HISBIYXJkd2lyZWQgY29sdW1uIG5hbWVzIFwiaXRlbTFcIiBhbmQgXCJpdGVtMlwiXG4gICMgV0FSTklORyEgSGFyZHdpcmVkIGNvbnN0YW50IFwidG9waWNzX29yZGVyZWRcIiwgdG8gYmUgcHJvdmlkZWQgZnJvbSBjYWxsaW5nIGVudmlyb25tZW50XG4gIGdncGxvdChkZiwgYWVzKHggPSBpdGVtMSwgeSA9IGl0ZW0yKSkgK1xuICAgIGdlb21fcG9pbnQoYWVzKHNpemUgPSBuLCBjb2xvdXIgPSBsb2cobikpKSArIFxuICAgIHNjYWxlX3lfZGlzY3JldGUobmFtZSA9IE5VTEwsIGxpbWl0cyA9IHJldih0YWdzX29yZGVyZWQpLCBwb3NpdGlvbiA9IFwicmlnaHRcIikgKyBcbiAgICBzY2FsZV94X2Rpc2NyZXRlKG5hbWUgPSBOVUxMLCBsaW1pdHMgPSB0YWdzX29yZGVyZWQsIHBvc2l0aW9uID0gXCJ0b3BcIikgICsgXG4gICAgdGhlbWUoYXhpcy50ZXh0LnggID0gZWxlbWVudF90ZXh0KGFuZ2xlID0gOTAsIHZqdXN0ID0gMC41LCBoanVzdCA9IDApKVxufVxuXG5jcm9zc3Bsb3RfcGFpcndpc2UgPC0gZnVuY3Rpb24oYW5ub3RhdGlvbnMsIGFubm90YXRvcnMgPSBOVUxMLCBtYXJnaW5zID0gVFJVRSwgY3V0b2ZmID0gMCwgdGFnX29yZGVyID0gYyhcInZhbHVlXCIsIFwicG9wdWxhcml0eVwiKSkge1xuICAjIFdBUk5JTkchIEhhcmR3aXJlZCBjb2x1bW4gbmFtZSBcIm5cIlxuICBkZiA8LSBhZ3JlZW1lbnRfcGFpcndpc2UoYW5ub3RhdGlvbnMsIGFubm90YXRvcnMpXG4gIGRmIDwtIGRmW2RmJG4gPiBjdXRvZmYsXVxuICAjIFdBUk5JTkchIEhhcmR3aXJlZCBjb2x1bW4gbmFtZXMgXCJhbm5vdGF0b3IxXCIgYW5kIFwiYW5ub3RhdG9yMlwiXG4gIHRhZ19vcmRlciA8LSBtYXRjaC5hcmcodGFnX29yZGVyKVxuICB0YWdzX29yZGVyZWQgPC0gc3dpdGNoKHRhZ19vcmRlciwgXG4gICAgICAgICAgICAgICAgICAgICAgICAgcG9wdWxhcml0eSA9IGdldF90YWdzX29yZGVyZWRfYnlfZGVjcmVhc2luZ19wb3B1bGFyaXR5KGFubm90YXRpb25zKSxcbiAgICAgICAgICAgICAgICAgICAgICAgICB2YWx1ZSA9IHNvcnQodW5pcXVlKGFubm90YXRpb25zJGFubm90YXRpb25fdmFsdWUpKSlcbiAgY3Jvc3NwbG90KGRmLCB0YWdzX29yZGVyZWQpICsgZmFjZXRfZ3JpZChhbm5vdGF0b3IxIH4gYW5ub3RhdG9yMiwgbWFyZ2lucywgc3dpdGNoID0gXCJ5XCIpXG59XG5cbiMgV3JhcHBlciB0byBzaGFwZSB0aGUgZGYgYW5kIHRoZW4gY2FsbCB0aGUgcGxvdCBmdW5jdGlvblxuY3Jvc3NwbG90X2Zyb21fYW5ub3RhdGlvbnMgPC0gZnVuY3Rpb24oYW5ub3RhdGlvbnMsIGFubm90YXRvcnMgPSBOVUxMKSB7XG4gIGRmIDwtIGFncmVlbWVudChhbm5vdGF0aW9ucylcbiAgY3Jvc3NwbG90KGRmKVxufVxuYGBgIn0= -->
-<pre class="r"><code># Note: could make the below less specific to annotation
-
-annotators_subset &lt;- function(annotations, annotators = NULL) {
-  # Default to all annotators
-  # WARNING! Hardwired column name &quot;annotator&quot;
-  if (!is.null(annotators)) df &lt;- dplyr::filter(annotations, annotator %in% annotators)
-  else df &lt;- annotations
-  df
-}
-
-# Take a list of annotations, by document, annotator, and annotation value (tag), and calculate agreement among a specified subset of annotators.
-### Q: Should we complete missing pairs with zeros? Or provide an option to do so, with corresponding function argument?
-agreement &lt;- function(annotations, annotators = NULL) {
-  df &lt;- annotators_subset(annotations, annotators)
-  # WARNING! Hardwired column name &quot;annotation_value&quot;, &quot;doc_id&quot;
-  widyr::pairwise_count(df, annotation_value, doc_id, diag = TRUE)
-}
-
-get_annotators &lt;- function(annotations) unique(annotations$annotator)
-
-### A: check that item1 corresponds to annotator1 and likewise for 2
-agreement_pair &lt;- function(annotations, annotators) {
-  stopifnot(is.character(annotators) &amp;&amp; length(annotators) == 2)
-  df &lt;- agreement(annotations, annotators)
-  df$annotator1 = annotators[1]
-  df$annotator2 = annotators[2]
-  df
-}
-
-# Row-bind together all pairwise combinations of annotators, plus optionally margins
-agreement_pairwise &lt;- function(annotations, annotators = NULL, diag = TRUE) {
-  # If an annotator is listed in the annotators argument, but doesn't appear in the annotations dataset, that annotator will be imputed to exist and implicitly have 
-  df &lt;- annotators_subset(annotations, annotators)
-  # If annotators argument is left NULL then infer annotators list from annotations dataframe (so won't see annotators who exist but didn't contribute any annotations)
-  if (is.null(annotators)) annotators &lt;- get_annotators(annotations)
-  annotator_pairs &lt;- 
-    if (diag) {
-      temp &lt;- gtools::permutations(length(annotators), 2, annotators, repeats.allowed = TRUE)
-      split(temp, row(temp))} else combn(annotators, 2, simplify = FALSE)
-  purrr::map_df(annotator_pairs, ~agreement_pair(annotations, .x)) 
-}
-
-# Bubble plot on square matrix of potential annotation values 
-crossplot &lt;- function(df, tags_ordered) {
-  # WARNING! Hardwired column names &quot;item1&quot; and &quot;item2&quot;
-  # WARNING! Hardwired constant &quot;topics_ordered&quot;, to be provided from calling environment
-  ggplot(df, aes(x = item1, y = item2)) +
-    geom_point(aes(size = n, colour = log(n))) + 
-    scale_y_discrete(name = NULL, limits = rev(tags_ordered), position = &quot;right&quot;) + 
-    scale_x_discrete(name = NULL, limits = tags_ordered, position = &quot;top&quot;)  + 
-    theme(axis.text.x  = element_text(angle = 90, vjust = 0.5, hjust = 0))
-}
-
-crossplot_pairwise &lt;- function(annotations, annotators = NULL, margins = TRUE, cutoff = 0, tag_order = c(&quot;value&quot;, &quot;popularity&quot;)) {
-  # WARNING! Hardwired column name &quot;n&quot;
-  df &lt;- agreement_pairwise(annotations, annotators)
-  df &lt;- df[df$n &gt; cutoff,]
-  # WARNING! Hardwired column names &quot;annotator1&quot; and &quot;annotator2&quot;
-  tag_order &lt;- match.arg(tag_order)
-  tags_ordered &lt;- switch(tag_order, 
-                         popularity = get_tags_ordered_by_decreasing_popularity(annotations),
-                         value = sort(unique(annotations$annotation_value)))
-  crossplot(df, tags_ordered) + facet_grid(annotator1 ~ annotator2, margins, switch = &quot;y&quot;)
-}
-
-# Wrapper to shape the df and then call the plot function
-crossplot_from_annotations &lt;- function(annotations, annotators = NULL) {
-  df &lt;- agreement(annotations)
-  crossplot(df)
-}</code></pre>
+  filter(annotation_type == &quot;topic&quot;) # %&gt;% 
+  # select(doc_id, id_annotation, annotator, annotation_value)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudG9waWNfb2NjdXJyZW5jZXNfd2l0aGluX2Fubm90YXRvciA8LSBcbiAgdG9waWNzICU+JSBcbiAgdW5pdGUoZG9jdW1lbnRfYW5ub3RhdG9yLCBkb2NfaWQsIGFubm90YXRvcikgJT4lICMgcGFpcndpc2VfY291bnQgd2lsbCBvbmx5IHRha2UgYSBzaW5nbGUgY29sdW1uIGZvciB0aGUgZ3JvdXBpbmcgdmFyaWFibGVcbiAgd2lkeXI6OnBhaXJ3aXNlX2NvdW50KGFubm90YXRpb25fdmFsdWUsIGRvY3VtZW50X2Fubm90YXRvciwgZGlhZyA9IEZBTFNFKVxuY3Jvc3NwbG90KHRvcGljX29jY3VycmVuY2VzX3dpdGhpbl9hbm5vdGF0b3IpXG5gYGAifQ== -->
-<pre class="r"><code>topic_occurrences_within_annotator &lt;- 
-  topics %&gt;% 
-  unite(document_annotator, doc_id, annotator) %&gt;% # pairwise_count will only take a single column for the grouping variable
-  widyr::pairwise_count(annotation_value, document_annotator, diag = FALSE)
-crossplot(topic_occurrences_within_annotator)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudG9waWNzICU+JVxuICBtdXRhdGUoYW5ub3RhdGlvbl92YWx1ZSA9IGlmZWxzZShhbm5vdGF0aW9uX3ZhbHVlICE9IFwiTm90IEJvRVwiLCBcIkJvRVwiLCBhbm5vdGF0aW9uX3ZhbHVlKSkgJT4lIFxuICBnZ3Bsb3QoYWVzKHggPSBhbm5vdGF0b3IpKSArIFxuICBnZW9tX2JhcihhZXMoZmlsbCA9IGFubm90YXRpb25fdmFsdWUpKSArIFxuICBjb29yZF9mbGlwKCkgKyBcbiAgc2NhbGVfeF9kaXNjcmV0ZShuYW1lID0gTlVMTClcbmBgYCJ9 -->
+<pre class="r"><code>topics %&gt;%
+  mutate(annotation_value = ifelse(annotation_value != &quot;Not BoE&quot;, &quot;BoE&quot;, annotation_value)) %&gt;% 
+  ggplot(aes(x = annotator)) + 
+  geom_bar(aes(fill = annotation_value)) + 
+  coord_flip() + 
+  scale_x_discrete(name = NULL)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-</div>
-<div id="agreement-disagreement-by-pairs-of-annotators" class="section level2">
-<h2><span class="header-section-number">3.3</span> Agreement / disagreement by pairs of annotators</h2>
-<p>Pairwise coccurrences of topics on the same document, from any annotator, including multiple topic tags applied by same annotator to same document. A given tag will be counted (m-1) times, where m is the number of tags applied by any annotator on a given document, i.e. once for each pair of tags that the tag appears in.</p>
-<p>Note that to the extent that there are multiple tags from the same annotator (on a given document) with the tags applied by different annotators, this plot does <em>not</em> provide a completely clean measure of agreement between annotators (it conflates cooccurence within annotator).</p>
-<p>But I don’t see a straightforward how to measure agreement where there are multiple tags per annotator.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY3Jvc3NwbG90X3BhaXJ3aXNlKHRvcGljcylcbmBgYCJ9 -->
-<pre class="r"><code>crossplot_pairwise(topics)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudG9waWNzICU+JSBcbiAgZmlsdGVyKGFubm90YXRpb25fdmFsdWUgIT0gXCJOb3QgQm9FXCIpICU+JSBcbiAgcGxvdF9tYXJnaW5hbF90YWdfZnJlcXVlbmN5KHNvcnQgPSBcImZyZXF1ZW5jeVwiKVxuYGBgIn0= -->
+<pre class="r"><code>topics %&gt;% 
+  filter(annotation_value != &quot;Not BoE&quot;) %&gt;% 
+  plot_marginal_tag_frequency(sort = &quot;frequency&quot;)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>Censor cells with very few co-occurrences, to make it visually easier to identify the main features of disagreement.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY3Jvc3NwbG90X3BhaXJ3aXNlKHRvcGljcywgY3V0b2ZmID0gMilcbmBgYCJ9 -->
-<pre class="r"><code>crossplot_pairwise(topics, cutoff = 2)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGxvdF9jb2luY2lkZW5jZXNfYW5ub3RhdG9yc19wYWlyd2lzZSh0b3BpY3MsIGN1dG9mZiA9IDAsIHNvcnQgPSBcImZyZXF1ZW5jeVwiKVxuYGBgIn0= -->
+<pre class="r"><code>plot_coincidences_annotators_pairwise(topics, cutoff = 0, sort = &quot;frequency&quot;)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Cooccurrences can also be counted within subsets of annotators. Special cases include within the same annotator, i.e. where annotators apply multiple tags, which do they tend to apply together; and within pairs of annotators.</p>
 </div>
-<div id="co-occurrences-between-pairs-of-annotators." class="section level2">
-<h2><span class="header-section-number">3.4</span> Co-occurrences between pairs of annotators.</h2>
+<div id="nature-tags" class="section level1">
+<h1><span class="header-section-number">4</span> “Nature” tags</h1>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB0b3BpY19jb29jY3VycmVuY2VzIDwtIFxuIyAgIHRvcGljcyAlPiUgXG4jICAgd2lkeXI6OnBhaXJ3aXNlX2NvdW50KGFubm90YXRpb25fdmFsdWUsIGRvY19pZCwgZGlhZyA9IFRSVUUpICMgbG9zZXMgYW5ub3RhdG9yIGlkXG5cbiNjcm9zc3Bsb3QodG9waWNfY29vY2N1cnJlbmNlcylcbmNyb3NzcGxvdF9mcm9tX3RvcGljcyh0b3BpY3MpXG5gYGAifQ== -->
-<pre class="r"><code># topic_cooccurrences &lt;- 
-#   topics %&gt;% 
-#   widyr::pairwise_count(annotation_value, doc_id, diag = TRUE) # loses annotator id
-
-#crossplot(topic_cooccurrences)
-crossplot_from_topics(topics)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubmF0dXJlcyA8LSBcbiAgYW5ub3RhdGlvbnMgJT4lIFxuICBmaWx0ZXIoQm9FX3RvcGljKSAlPiUgXG4gIGZpbHRlcihhbm5vdGF0aW9uX3R5cGUgPT0gXCJuYXR1cmVcIilcbmBgYCJ9 -->
+<pre class="r"><code>natures &lt;- 
+  annotations %&gt;% 
+  filter(BoE_topic) %&gt;% 
+  filter(annotation_type == &quot;nature&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGxvdF9tYXJnaW5hbF90YWdfZnJlcXVlbmN5KG5hdHVyZXMsIHNvcnQgPSBcImZyZXF1ZW5jeVwiKVxuYGBgIn0= -->
+<pre class="r"><code>plot_marginal_tag_frequency(natures, sort = &quot;frequency&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY3Jvc3NwbG90X3BhaXJ3aXNlKG5hdHVyZXMsIGN1dG9mZiA9IDAsIHNvcnQgPSBcImZyZXF1ZW5jeVwiKVxuYGBgIn0= -->
+<pre class="r"><code>crossplot_pairwise(natures, cutoff = 0, sort = &quot;frequency&quot;)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
-<div id="document-by-document-view" class="section level2">
-<h2><span class="header-section-number">3.5</span> Document-by-document view</h2>
+<div id="sentiment" class="section level1">
+<h1><span class="header-section-number">5</span> Sentiment</h1>
+<p>Extract sentiment tags into a dataframe.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2VudGltZW50cyA8LSBcbiAgYW5ub3RhdGlvbnMgJT4lXG4gIGZpbHRlcihCb0VfdG9waWMpICU+JSBcbiAgZmlsdGVyKGFubm90YXRpb25fdHlwZSA9PSBcInNlbnRpbWVudFwiKSAlPiUgXG4gIHNlbGVjdChkb2NfaWQsIGlkX2Fubm90YXRpb24sIGFubm90YXRvciwgYW5ub3RhdGlvbl92YWx1ZSlcbmBgYCJ9 -->
+<pre class="r"><code>sentiments &lt;- 
+  annotations %&gt;%
+  filter(BoE_topic) %&gt;% 
+  filter(annotation_type == &quot;sentiment&quot;) %&gt;% 
+  select(doc_id, id_annotation, annotator, annotation_value)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Map sentiments strings to numbers.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBXQVJOSU5HISBIYXJkd2lyZWQgc3RyaW5nc1xuc2VudGltZW50X21hcF9jaHJfdG9fbnVtZXJpY19jb3JyZWN0IDwtIFxuICB0aWJibGU6OnRyaWJibGUoXG4gICAgfmFubm90YXRpb25fdmFsdWUsIH5zY29yZSxcbiAgICBcIjEuIFN0cm9uZ2x5IE5lZ2F0aXZlXCIsIC0zTCxcbiAgICBcIjIuIE5lZ2F0aXZlXCIgICAgICAgICAsIC0yTCxcbiAgICBcIjMuIFdlYWtseSBOZWdhdGl2ZVwiICAsIC0xTCxcbiAgICBcIjQuIE5ldXRyYWxcIiAgICAgICAgICAsICAwTCxcbiAgICBcIjUuIFdlYWtseSBQb3NpdGl2ZVwiICAsICsxTCxcbiAgICBcIjYuIFBvc2l0aXZlXCIgICAgICAgICAsICsyTCxcbiAgICBcIjcuIFN0cm9uZ2x5IFBvc2l0aXZlXCIsICszTCxcbiAgICBcIkNvdWxkbid0IHNjb3JlXCIgICAgICAsIE5BX2ludGVnZXJfXG4gIClcblxuc2VudGltZW50X21hcF9jaHJfdG9fbnVtZXJpY18yMDE3MDQyNiA8LSBcbiAgdGliYmxlOjp0cmliYmxlKFxuICAgIH5hbm5vdGF0aW9uX3ZhbHVlLCB+c2NvcmUsXG4gICAgXCIxLiBTdHJvbmdseSBOZWdhdGl2ZVwiLCAtM0wsXG4gICAgXCIyLiBOZWdhdGl2ZVwiICAgICAgICAgLCAtMkwsXG4gICAgXCIzLiBXZWFrbHkgTmVnYXRpdmVcIiAgLCAtMUwsXG4gICAgXCI0LiBXZWFrbHkgUG9zaXRpdmVcIiAgLCArMUwsXG4gICAgXCI1LiBQb3NpdGl2ZVwiICAgICAgICAgLCArMkwsXG4gICAgXCI2LiBTdHJvbmdseSBQb3NpdGl2ZVwiLCArM0wsXG4gICAgXCI3LiBDb3VsZG4ndCBzY29yZVwiICAgLCBOQV9pbnRlZ2VyXyxcbiAgICBcIk5ldXRyYWxcIiAgICAgICAgICAgICAsIDBcbiAgKVxuXG5cbiMgTm90ZSB0aGlzIHdpbGwgbHVtcCB1bnNjb3JlZCBkb2N1bWVudHMgaW4gd2l0aCBleHBsaWNpdCBcIkNvdWxkbid0IHNjb3JlXCIgdGFncywgc28gdG8gY2hlY2sgZm9yIGRvY3VtZW50cyBsYWNraW5nIGEgc2VudGltZW50IHRhZywgSSB3b3VsZCBuZWVkIHRvIGRvIHNvIHdpdGggTkFfY2hhcmFjdGVyXyBlYXJseSBvblxuc2VudGltZW50cyAlPD4lXG4gIGxlZnRfam9pbihzZW50aW1lbnRfbWFwX2Nocl90b19udW1lcmljXzIwMTcwNDI2LCBieSA9IFwiYW5ub3RhdGlvbl92YWx1ZVwiKSAlPiUgXG4gIHJlbmFtZShhbm5vdGF0aW9uX3ZhbHVlX3N0ciA9IGFubm90YXRpb25fdmFsdWUsXG4gICAgICAgICBhbm5vdGF0aW9uX3ZhbHVlID0gc2NvcmUpICMga2VlcCB2YXJuYW1lIGdlbmVyaWMgdG8gZWFzZSByZXVzZSBvZiBvdGhlciBjb2RlICh3b3VsZCBiZWNvbWUgdW5uZWNlc3NhcnkgaWYgcGFzc2luZyBhcyBmdW5jdGlvbiBhcmd1bWVudClcbmBgYCJ9 -->
+<pre class="r"><code># WARNING! Hardwired strings
+sentiment_map_chr_to_numeric_correct &lt;- 
+  tibble::tribble(
+    ~annotation_value, ~score,
+    &quot;1. Strongly Negative&quot;, -3L,
+    &quot;2. Negative&quot;         , -2L,
+    &quot;3. Weakly Negative&quot;  , -1L,
+    &quot;4. Neutral&quot;          ,  0L,
+    &quot;5. Weakly Positive&quot;  , +1L,
+    &quot;6. Positive&quot;         , +2L,
+    &quot;7. Strongly Positive&quot;, +3L,
+    &quot;Couldn't score&quot;      , NA_integer_
+  )
+
+sentiment_map_chr_to_numeric_20170426 &lt;- 
+  tibble::tribble(
+    ~annotation_value, ~score,
+    &quot;1. Strongly Negative&quot;, -3L,
+    &quot;2. Negative&quot;         , -2L,
+    &quot;3. Weakly Negative&quot;  , -1L,
+    &quot;4. Weakly Positive&quot;  , +1L,
+    &quot;5. Positive&quot;         , +2L,
+    &quot;6. Strongly Positive&quot;, +3L,
+    &quot;7. Couldn't score&quot;   , NA_integer_,
+    &quot;Neutral&quot;             , 0
+  )
+
+
+# Note this will lump unscored documents in with explicit &quot;Couldn't score&quot; tags, so to check for documents lacking a sentiment tag, I would need to do so with NA_character_ early on
+sentiments %&lt;&gt;%
+  left_join(sentiment_map_chr_to_numeric_20170426, by = &quot;annotation_value&quot;) %&gt;% 
+  rename(annotation_value_str = annotation_value,
+         annotation_value = score) # keep varname generic to ease reuse of other code (would become unnecessary if passing as function argument)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<div id="mean-by-annotator" class="section level2">
+<h2><span class="header-section-number">5.1</span> Mean by annotator</h2>
+<p>Treating sentiment scores as on an interval scale from -3 (strongly negative) to +3 (strongly positive).</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2VudGltZW50cyAlPiUgXG4gIGdyb3VwX2J5KGFubm90YXRvcikgJT4lIFxuICBzdW1tYXJpc2UobWVhbiA9IG1lYW4oYXMubnVtZXJpYyhhbm5vdGF0aW9uX3ZhbHVlKSwgbmEucm0gPSBUUlVFKSlcbmBgYCJ9 -->
+<pre class="r"><code>sentiments %&gt;% 
+  group_by(annotator) %&gt;% 
+  summarise(mean = mean(as.numeric(annotation_value), na.rm = TRUE))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="association-between-annotators" class="section level2">
+<h2><span class="header-section-number">5.2</span> Association between annotators</h2>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYW5ub3RhdG9ycyA8LSB1bmlxdWUoc2VudGltZW50cyRhbm5vdGF0b3IpXG5zZW50aW1lbnRzICU+JSBcbiAgc2VsZWN0KC1hbm5vdGF0aW9uX3ZhbHVlX3N0cikgJT4lIFxuICBzcHJlYWQoYW5ub3RhdG9yLCBhbm5vdGF0aW9uX3ZhbHVlKSAlPiUgXG4gIHNlbGVjdF8oLmRvdHMgPSBhcy5saXN0KGFubm90YXRvcnMpKSAlPiVcbiAgI211dGF0ZV9hbGwoYXMuaW50ZWdlcikgJT4lIFxuICBjb3IobWV0aG9kID0gXCJzcGVhcm1hblwiLFxuICAgICAgdXNlID0gXCJwYWlyd2lzZS5jb21wbGV0ZS5vYnNcIikgJT4lIFxuICBrbml0cjo6a2FibGUoZGlnaXRzID0gMilcbmBgYCJ9 -->
+<pre class="r"><code>annotators &lt;- unique(sentiments$annotator)
+sentiments %&gt;% 
+  select(-annotation_value_str) %&gt;% 
+  spread(annotator, annotation_value) %&gt;% 
+  select_(.dots = as.list(annotators)) %&gt;%
+  #mutate_all(as.integer) %&gt;% 
+  cor(method = &quot;spearman&quot;,
+      use = &quot;pairwise.complete.obs&quot;) %&gt;% 
+  knitr::kable(digits = 2)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGxvdF9tYXJnaW5hbF90YWdfZnJlcXVlbmN5KHNlbnRpbWVudHMsIHNvcnQgPSBcInZhbHVlXCIpXG5gYGAifQ== -->
+<pre class="r"><code>plot_marginal_tag_frequency(sentiments, sort = &quot;value&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMjIFE6IEhvdyB0byBkZWFsIHdpdGggbWlzc2luZyB2YWx1ZSwgYXMgd2lsbCBjb21tb25seSBvY2N1cj8gVGhlc2Ugc2hvdWxkIG9ubHkgY29tZSB1cCB3aGVuIHRoZSB0b3BpYyBpcyBub3QgQm9FLlxuY3Jvc3NwbG90X3BhaXJ3aXNlKHNlbnRpbWVudHMsIGN1dG9mZiA9IDAsIHNvcnQgPSBcInZhbHVlXCIpXG5gYGAifQ== -->
+<pre class="r"><code>### Q: How to deal with missing value, as will commonly occur? These should only come up when the topic is not BoE.
+crossplot_pairwise(sentiments, cutoff = 0, sort = &quot;value&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="levelchange-tags" class="section level2">
+<h2><span class="header-section-number">5.3</span> Level/change tags</h2>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGV2ZWxzX29yX2NoYW5nZXMgPC0gXG4gIGFubm90YXRpb25zICU+JVxuICBmaWx0ZXIoQm9FX3RvcGljKSAlPiUgXG4gIGZpbHRlcihhbm5vdGF0aW9uX3R5cGUgPT0gXCJsZXZlbC9jaGFuZ2VcIilcblxucGxvdF9tYXJnaW5hbF90YWdfZnJlcXVlbmN5KGxldmVsc19vcl9jaGFuZ2VzKVxuYGBgIn0= -->
+<pre class="r"><code>levels_or_changes &lt;- 
+  annotations %&gt;%
+  filter(BoE_topic) %&gt;% 
+  filter(annotation_type == &quot;level/change&quot;)
+
+plot_marginal_tag_frequency(levels_or_changes)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+</div>
+<div id="document-by-document-view" class="section level1">
+<h1><span class="header-section-number">6</span> Document-by-document view</h1>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudG9waWNfdW5pcXVlX2Fubm90YXRvciA8LSBcbiAgdG9waWNzICU+JSBcbiAgc2VsZWN0KGRvY19pZCwgYW5ub3RhdG9yLCBhbm5vdGF0aW9uX3ZhbHVlKSAlPiUgXG4gIGdyb3VwX2J5KGRvY19pZCwgYW5ub3RhdG9yKSAlPiUgXG4gIG11dGF0ZShkb2N1bWVudF9hbm5vdGF0b3Jfc2VxID0gcm93X251bWJlcigpLFxuICAgICAgICAgYW5ub3RhdG9yX3VuaXF1ZSA9IGlmZWxzZShkb2N1bWVudF9hbm5vdGF0b3Jfc2VxID09IDEsIGFubm90YXRvciwgcGFzdGUwKGFubm90YXRvciwgXCJfMlwiKSkpICU+JSBcbiAgdW5ncm91cCgpICU+JSBcbiAgc2VsZWN0KC1hbm5vdGF0b3IsIC1kb2N1bWVudF9hbm5vdGF0b3Jfc2VxKSAlPiUgXG4gIHNwcmVhZChhbm5vdGF0b3JfdW5pcXVlLCBhbm5vdGF0aW9uX3ZhbHVlKVxudG9waWNfdW5pcXVlX2Fubm90YXRvclxuYGBgIn0= -->
@@ -532,9 +508,8 @@ topic_unique_annotator</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-</div>
 <div id="agreement-disagreement-by-document" class="section level2">
-<h2><span class="header-section-number">3.6</span> Agreement / disagreement by document</h2>
+<h2><span class="header-section-number">6.1</span> Agreement / disagreement by document</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudG9waWNzX3Blcl9kb2MgPC0gXG4gIHRvcGljcyAlPiVcbiAgZ3JvdXBfYnkoZG9jX2lkKSAlPiUgXG4gIHN1bW1hcmlzZShuX2Rpc3RpbmN0X3RvcGljID0gbl9kaXN0aW5jdChhbm5vdGF0aW9uX3ZhbHVlKSlcbmBgYCJ9 -->
@@ -567,162 +542,10 @@ topic_unique_annotator</code></pre>
 <!-- rnb-text-begin -->
 </div>
 </div>
-<div id="topics" class="section level1">
-<h1><span class="header-section-number">4</span> Topics</h1>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMjIEE6IGltcHV0ZSBhIG5vbl9ib0UgY2F0ZWdvcnlcbnBsb3RfbWFyZ2luYWxfdGFnX3VzZV9ieV9hbm5vdGF0b3IodG9waWNzLCB0YWdfb3JkZXIgPSBcInBvcHVsYXJpdHlcIilcbmBgYCJ9 -->
-<pre class="r"><code>### A: impute a non_boE category
-plot_marginal_tag_use_by_annotator(topics, tag_order = &quot;popularity&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY3Jvc3NwbG90X3BhaXJ3aXNlKHRvcGljcywgY3V0b2ZmID0gMCwgdGFnX29yZGVyID0gXCJwb3B1bGFyaXR5XCIpXG5gYGAifQ== -->
-<pre class="r"><code>crossplot_pairwise(topics, cutoff = 0, tag_order = &quot;popularity&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-</div>
-<div id="nature-tags" class="section level1">
-<h1><span class="header-section-number">5</span> “Nature” tags</h1>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubmF0dXJlcyA8LSBcbiAgYW5ub3RhdGlvbnMgJT4lIFxuICBmaWx0ZXIoYW5ub3RhdGlvbl90eXBlID09IFwibmF0dXJlXCIpXG5cbnBsb3RfbWFyZ2luYWxfdGFnX3VzZV9ieV9hbm5vdGF0b3IobmF0dXJlcywgdGFnX29yZGVyID0gXCJwb3B1bGFyaXR5XCIpXG5gYGAifQ== -->
-<pre class="r"><code>natures &lt;- 
-  annotations %&gt;% 
-  filter(annotation_type == &quot;nature&quot;)
-
-plot_marginal_tag_use_by_annotator(natures, tag_order = &quot;popularity&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY3Jvc3NwbG90X3BhaXJ3aXNlKG5hdHVyZXMsIGN1dG9mZiA9IDAsIHRhZ19vcmRlciA9IFwicG9wdWxhcml0eVwiKVxuYGBgIn0= -->
-<pre class="r"><code>crossplot_pairwise(natures, cutoff = 0, tag_order = &quot;popularity&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-</div>
-<div id="sentiment" class="section level1">
-<h1><span class="header-section-number">6</span> Sentiment</h1>
-<p>Extract sentiment tags into a dataframe.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2VudGltZW50cyA8LSBcbiAgYW5ub3RhdGlvbnMgJT4lIFxuICBmaWx0ZXIoYW5ub3RhdGlvbl90eXBlID09IFwic2VudGltZW50XCIpICU+JSBcbiAgc2VsZWN0KGRvY19pZCwgaWRfYW5ub3RhdGlvbiwgYW5ub3RhdG9yLCBhbm5vdGF0aW9uX3ZhbHVlKVxuYGBgIn0= -->
-<pre class="r"><code>sentiments &lt;- 
-  annotations %&gt;% 
-  filter(annotation_type == &quot;sentiment&quot;) %&gt;% 
-  select(doc_id, id_annotation, annotator, annotation_value)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Map sentiments strings to numbers.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBXQVJOSU5HISBIYXJkd2lyZWQgc3RyaW5nc1xuc2VudGltZW50X21hcF9jaHJfdG9fbnVtZXJpY19jb3JyZWN0IDwtIFxuICB0aWJibGU6OnRyaWJibGUoXG4gICAgfmFubm90YXRpb25fdmFsdWUsIH5zY29yZSxcbiAgICBcIjEuIFN0cm9uZ2x5IE5lZ2F0aXZlXCIsIC0zTCxcbiAgICBcIjIuIE5lZ2F0aXZlXCIgICAgICAgICAsIC0yTCxcbiAgICBcIjMuIFdlYWtseSBOZWdhdGl2ZVwiICAsIC0xTCxcbiAgICBcIjQuIE5ldXRyYWxcIiAgICAgICAgICAsICAwTCxcbiAgICBcIjUuIFdlYWtseSBQb3NpdGl2ZVwiICAsICsxTCxcbiAgICBcIjYuIFBvc2l0aXZlXCIgICAgICAgICAsICsyTCxcbiAgICBcIjcuIFN0cm9uZ2x5IFBvc2l0aXZlXCIsICszTCxcbiAgICBcIkNvdWxkbid0IHNjb3JlXCIgICAgICAsIE5BX2ludGVnZXJfXG4gIClcblxuc2VudGltZW50X21hcF9jaHJfdG9fbnVtZXJpY18yMDE3MDQyNiA8LSBcbiAgdGliYmxlOjp0cmliYmxlKFxuICAgIH5hbm5vdGF0aW9uX3ZhbHVlLCB+c2NvcmUsXG4gICAgXCIxLiBTdHJvbmdseSBOZWdhdGl2ZVwiLCAtM0wsXG4gICAgXCIyLiBOZWdhdGl2ZVwiICAgICAgICAgLCAtMkwsXG4gICAgXCIzLiBXZWFrbHkgTmVnYXRpdmVcIiAgLCAtMUwsXG4gICAgXCI0LiBXZWFrbHkgUG9zaXRpdmVcIiAgLCArMUwsXG4gICAgXCI1LiBQb3NpdGl2ZVwiICAgICAgICAgLCArMkwsXG4gICAgXCI2LiBTdHJvbmdseSBQb3NpdGl2ZVwiLCArM0wsXG4gICAgXCI3LiBDb3VsZG4ndCBzY29yZVwiICAgICAgLCAgMExcbiAgKVxuXG5cbiMgTm90ZSB0aGlzIHdpbGwgbHVtcCB1bnNjb3JlZCBkb2N1bWVudHMgaW4gd2l0aCBleHBsaWNpdCBcIkNvdWxkbid0IHNjb3JlXCIgdGFncywgc28gdG8gY2hlY2sgZm9yIGRvY3VtZW50cyBsYWNraW5nIGEgc2VudGltZW50IHRhZywgSSB3b3VsZCBuZWVkIHRvIGRvIHNvIHdpdGggTkFfY2hhcmFjdGVyXyBlYXJseSBvblxuc2VudGltZW50cyAlPD4lXG4gIGxlZnRfam9pbihzZW50aW1lbnRfbWFwX2Nocl90b19udW1lcmljXzIwMTcwNDI2LCBieSA9IFwiYW5ub3RhdGlvbl92YWx1ZVwiKSAlPiUgXG4gIHJlbmFtZShhbm5vdGF0aW9uX3ZhbHVlX3N0ciA9IGFubm90YXRpb25fdmFsdWUsXG4gICAgICAgICBhbm5vdGF0aW9uX3ZhbHVlID0gc2NvcmUpICMga2VlcCB2YXJuYW1lIGdlbmVyaWMgdG8gZWFzZSByZXVzZSBvZiBvdGhlciBjb2RlICh3b3VsZCBiZWNvbWUgdW5uZWNlc3NhcnkgaWYgcGFzc2luZyBhcyBmdW5jdGlvbiBhcmd1bWVudClcbmBgYCJ9 -->
-<pre class="r"><code># WARNING! Hardwired strings
-sentiment_map_chr_to_numeric_correct &lt;- 
-  tibble::tribble(
-    ~annotation_value, ~score,
-    &quot;1. Strongly Negative&quot;, -3L,
-    &quot;2. Negative&quot;         , -2L,
-    &quot;3. Weakly Negative&quot;  , -1L,
-    &quot;4. Neutral&quot;          ,  0L,
-    &quot;5. Weakly Positive&quot;  , +1L,
-    &quot;6. Positive&quot;         , +2L,
-    &quot;7. Strongly Positive&quot;, +3L,
-    &quot;Couldn't score&quot;      , NA_integer_
-  )
-
-sentiment_map_chr_to_numeric_20170426 &lt;- 
-  tibble::tribble(
-    ~annotation_value, ~score,
-    &quot;1. Strongly Negative&quot;, -3L,
-    &quot;2. Negative&quot;         , -2L,
-    &quot;3. Weakly Negative&quot;  , -1L,
-    &quot;4. Weakly Positive&quot;  , +1L,
-    &quot;5. Positive&quot;         , +2L,
-    &quot;6. Strongly Positive&quot;, +3L,
-    &quot;7. Couldn't score&quot;      ,  0L
-  )
-
-
-# Note this will lump unscored documents in with explicit &quot;Couldn't score&quot; tags, so to check for documents lacking a sentiment tag, I would need to do so with NA_character_ early on
-sentiments %&lt;&gt;%
-  left_join(sentiment_map_chr_to_numeric_20170426, by = &quot;annotation_value&quot;) %&gt;% 
-  rename(annotation_value_str = annotation_value,
-         annotation_value = score) # keep varname generic to ease reuse of other code (would become unnecessary if passing as function argument)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<div id="mean-by-annotator" class="section level2">
-<h2><span class="header-section-number">6.1</span> Mean by annotator</h2>
-<p>Treating sentiment scores as on an interval scale from -3 (strongly negative) to +3 (strongly positive).</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2VudGltZW50cyAlPiUgXG4gIGdyb3VwX2J5KGFubm90YXRvcikgJT4lIFxuICBzdW1tYXJpc2UobWVhbiA9IG1lYW4oYXMubnVtZXJpYyhhbm5vdGF0aW9uX3ZhbHVlKSwgbmEucm0gPSBUUlVFKSlcbmBgYCJ9 -->
-<pre class="r"><code>sentiments %&gt;% 
-  group_by(annotator) %&gt;% 
-  summarise(mean = mean(as.numeric(annotation_value), na.rm = TRUE))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-</div>
-<div id="association-between-annotators" class="section level2">
-<h2><span class="header-section-number">6.2</span> Association between annotators</h2>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYW5ub3RhdG9ycyA8LSB1bmlxdWUoc2VudGltZW50cyRhbm5vdGF0b3IpXG5zZW50aW1lbnRzICU+JSBcbiAgc2VsZWN0KC1hbm5vdGF0aW9uX3ZhbHVlX3N0cikgJT4lIFxuICBzcHJlYWQoYW5ub3RhdG9yLCBhbm5vdGF0aW9uX3ZhbHVlKSAlPiUgXG4gIHNlbGVjdF8oLmRvdHMgPSBhcy5saXN0KGFubm90YXRvcnMpKSAlPiVcbiAgI211dGF0ZV9hbGwoYXMuaW50ZWdlcikgJT4lIFxuICBjb3IobWV0aG9kID0gXCJzcGVhcm1hblwiLFxuICAgICAgdXNlID0gXCJwYWlyd2lzZS5jb21wbGV0ZS5vYnNcIikgJT4lIFxuICBrbml0cjo6a2FibGUoZGlnaXRzID0gMilcbmBgYCJ9 -->
-<pre class="r"><code>annotators &lt;- unique(sentiments$annotator)
-sentiments %&gt;% 
-  select(-annotation_value_str) %&gt;% 
-  spread(annotator, annotation_value) %&gt;% 
-  select_(.dots = as.list(annotators)) %&gt;%
-  #mutate_all(as.integer) %&gt;% 
-  cor(method = &quot;spearman&quot;,
-      use = &quot;pairwise.complete.obs&quot;) %&gt;% 
-  knitr::kable(digits = 2)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGxvdF9tYXJnaW5hbF90YWdfdXNlX2J5X2Fubm90YXRvcihzZW50aW1lbnRzLCB0YWdfb3JkZXIgPSBcInZhbHVlXCIpXG5gYGAifQ== -->
-<pre class="r"><code>plot_marginal_tag_use_by_annotator(sentiments, tag_order = &quot;value&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMjIFE6IEhvdyB0byBkZWFsIHdpdGggbWlzc2luZyB2YWx1ZSwgYXMgd2lsbCBjb21tb25seSBvY2N1cj8gVGhlc2Ugc2hvdWxkIG9ubHkgY29tZSB1cCB3aGVuIHRoZSB0b3BpYyBpcyBub3QgQm9FLlxuY3Jvc3NwbG90X3BhaXJ3aXNlKHNlbnRpbWVudHMsIGN1dG9mZiA9IDAsIHRhZ19vcmRlciA9IFwidmFsdWVcIilcbmBgYCJ9 -->
-<pre class="r"><code>### Q: How to deal with missing value, as will commonly occur? These should only come up when the topic is not BoE.
-crossplot_pairwise(sentiments, cutoff = 0, tag_order = &quot;value&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-</div>
-</div>
-<div id="levelchange-tags" class="section level1">
-<h1><span class="header-section-number">7</span> Level/change tags</h1>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGV2ZWxzX29yX2NoYW5nZXMgPC0gXG4gIGFubm90YXRpb25zICU+JSBcbiAgZmlsdGVyKGFubm90YXRpb25fdHlwZSA9IFwibGV2ZWwvY2hhbmdlXCIpXG5cbnBsb3RfbWFyZ2luYWxfdGFnX3VzZV9ieV9hbm5vdGF0b3IobGV2ZWxzX29yX2NoYW5nZXMpXG5gYGAifQ== -->
-<pre class="r"><code>levels_or_changes &lt;- 
-  annotations %&gt;% 
-  filter(annotation_type = &quot;level/change&quot;)
-
-plot_marginal_tag_use_by_annotator(levels_or_changes)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-</div>
 <div id="archive" class="section level1">
-<h1><span class="header-section-number">8</span> ARCHIVE</h1>
+<h1><span class="header-section-number">7</span> ARCHIVE</h1>
 <div id="completeness" class="section level2">
-<h2><span class="header-section-number">8.1</span> Completeness</h2>
+<h2><span class="header-section-number">7.1</span> Completeness</h2>
 <p>A: adapt for checking whatever our final tagging rules are</p>
 <p>Each annotator was supposed to apply one and only one sentiment annotation per document. List any violations.</p>
 <!-- rnb-text-end -->
@@ -741,7 +564,7 @@ sentiments %&gt;%
 <p>From here on we work with whatever sentiment annotations are available (not assuming a balanced panel).</p>
 </div>
 <div id="completeness-and-multiple-topic-tagging" class="section level2">
-<h2><span class="header-section-number">8.2</span> Completeness and multiple topic tagging</h2>
+<h2><span class="header-section-number">7.2</span> Completeness and multiple topic tagging</h2>
 <p>Distribution of number of topics per annotator-document pair (if any).</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
@@ -793,7 +616,7 @@ ntopic_per_annotator_document_distribution</code></pre>
 </div>
 </div>
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIkNvbXBhcmUgYW5ub3RhdG9ycyINCm91dHB1dDogDQogIGh0bWxfbm90ZWJvb2s6IA0KICAgIG51bWJlcl9zZWN0aW9uczogeWVzDQotLS0NCg0KIyBTZXR1cA0KDQpgYGB7ciBzZXR1cH0NCmxpYnJhcnkoY3JlZGliaWxpdHkpDQpsaWJyYXJ5KHdlYmFubm9yKQ0KbGlicmFyeSh0aWR5dmVyc2UpDQpsaWJyYXJ5KG1hZ3JpdHRyKQ0KbGlicmFyeShzdHJpbmdyKQ0KYGBgDQoNCg0KIyBJbXBvcnQgYW5ub3RhdGlvbnMNCg0KSW1wb3J0IGFubm90YXRpb25zIGZyb20gcHJvamVjdCBkaXJlY3RvcnkgZXhwb3J0ZWQgYnkgV2ViQW5uby4NCg0KYGBge3J9DQpwYXRoIDwtIGZpbGUucGF0aChnZXR3ZCgpLCAiLi4vZGF0YS1yYXciLCAiYW5ub3RhdGlvbnMiLCAiMjAxNy0wNC0yNiIpDQphbm5vdGF0aW9ucyA8LSANCiAgZ2V0X2Fubm90YXRpb25zLldlYkFubm9fcHJvamVjdChwYXRoKSAlPiUgDQogICMjIyBBOiBjb3VsZCBhYnN0cmFjdCB0aGlzIHN0ZXAgaW50byBhIGZ1bmN0aW9uIHRvIHJlcGxhY2UgYW5ub3RhdGlvbiBmaWVsZCBuYW1lcywgYW5kIG1ha2UgdGhlIHJlcGxhY2VtZW50cyB0byBiZSBwYXJhbWV0ZXJzIHRvIHRoZSBwcm9ncmFtLCByYXRoZXIgdGhhbiBoYXJkd2lyZWQNCiAgbXV0YXRlKGFubm90YXRpb25fdHlwZSA9IHN0cmluZ3I6OnN0cl9yZXBsYWNlKGFubm90YXRpb25fdHlwZSwgIlNjb3JlIiwgInNlbnRpbWVudCIpLA0KICAgICAgICAgYW5ub3RhdGlvbl90eXBlID0gc3RyaW5ncjo6c3RyX3JlcGxhY2UoYW5ub3RhdGlvbl90eXBlLCAiQ29udGV4dCIsICJ0b3BpYyIpLA0KICAgICAgICAgYW5ub3RhdGlvbl90eXBlID0gc3RyaW5ncjo6c3RyX3JlcGxhY2UoYW5ub3RhdGlvbl90eXBlLCAiaHlwb3RoZXRpY2FsIiwgIm5hdHVyZSIpKQ0KYW5ub3RhdGlvbnMNCmBgYA0KDQpXaGVyZSB0aGUgdGFnZ2luZyBwb2xpY3kgaXMgdG8gaGF2ZSBhIGRlZmF1bHQgdGFnIGltcGxpZWQgYnkgbm8gdGFnLCB3ZSBuZWVkIHRvIGltcHV0ZSB0aGlzIHRvIHRoZSBkYXRhZnJhbWUuIEluIGNhc2UgdGhlcmUgYXJlIGRvY3VtZW50cyB3aGljaCAqbm8qIGFubm90YXRvciBoYXMgZXhwbGljaXRseSB0YWdnZWQsIHdlIG5lZWQgYW4gZXh0ZXJuYWwgbGlzdCBvZiBkb2N1bWVudHMgc2hvd24gdG8gYW5ub3RhdG9ycy4NCg0KYGBge3J9DQojIyBBOiBpbXB1dGUgdG9waWNzIHRvIGJsYW5rcyAtLSBOb3QgQm9FDQojIyBBOiBnZXQgbGlzdCBvZiBkb2N1bWVudHMgaW5wdXQgdG8gV2ViQW5ubyBzbyBjYW4gYWxzbyBpbXB1dGUgb3ZlciBkb2NzIGxhY2tpbmcgYW55IGFubm90YXRpb25zIGF0IGFsbA0KYGBgDQoNCg0KRW51bWVyYXRlIHRoZSBzZXQgb2YgYW5ub3RhdGlvbiB0eXBlcyB0aGF0IGhhdmUgYmVlbiBhcHBsaWVkIHRvIHRoaXMgY29ycHVzLg0KDQpgYGB7cn0NCnVuaXF1ZShhbm5vdGF0aW9ucyRhbm5vdGF0aW9uX3R5cGUpDQpgYGANCg0KDQoNCiMgVG9waWNzKHMpDQoNCkV4dHJhY3QgdG9waWNzIHRhZ3MuDQoNCmBgYHtyfQ0KIyMjIEE6IHNlZSBpZiBjYW4gbWFwIG92ZXIgZGlmZmVyZW50IGFubm90YXRpb25fdHlwZXMsIHJhdGhlciB0aGFuIHJlcGVhdGluZyB0aGlzIHBhdHRlcm4gZm9yIGVhY2gNCnRvcGljcyA8LSANCiAgYW5ub3RhdGlvbnMgJT4lIA0KICBmaWx0ZXIoYW5ub3RhdGlvbl90eXBlID09ICJ0b3BpYyIpICU+JSANCiAgc2VsZWN0KGRvY19pZCwgaWRfYW5ub3RhdGlvbiwgYW5ub3RhdG9yLCBhbm5vdGF0aW9uX3ZhbHVlKQ0KYGBgDQoNCkVudW1lcmF0ZSB0b3BpY3MgdXNlZCAobm90IG5lY2Vzc2FyaWx5IHRoZSBmdWxsIHNldCBhdmFpbGFibGUgZm9yIHVzZSkuDQoNCmBgYHtyfQ0KZ2V0X3RhZ3NldF91c2VkKHRvcGljcykNCiMgdG9waWNzX2xpc3QgPC0gdW5pcXVlKHRvcGljcyRhbm5vdGF0aW9uX3ZhbHVlKQ0KIyB0b3BpY3NfbGlzdA0KYGBgDQoNCg0KDQoNCiMjIE1hcmdpbmFsIGRpc3RyaWJ1dGlvbiBieSBhbm5vdGF0b3INCg0KQ2FsY3VsYXRlIHdpdGhpbi1hbm5vdGF0b3IgdG9waWMgc2hhcmUuDQoNCmBgYHtyfQ0KIyMjIE5vdyBkb25lIGRpcmVjdGx5IGluIGdncGxvdA0KIyB0b3BpY19zaGFyZXMgPC0gDQojICAgdG9waWNzICU+JQ0KIyAgIGdyb3VwX2J5KGFubm90YXRvciwgYW5ub3RhdGlvbl92YWx1ZSkgJT4lIA0KIyAgIHN1bW1hcmlzZShudGFnID0gbigpKSAlPiUgDQojICAgZ3JvdXBfYnkoYW5ub3RhdG9yKSAlPiUgDQojICAgbXV0YXRlKHRvcGljX3NoYXJlID0gbnRhZyAvIHN1bShudGFnKSkNCmBgYA0KDQpBZGQgdGhlIG1lYW4gb3ZlciBhbm5vdGF0b3JzLg0KDQpgYGB7cn0NCiMgdG9waWNfc2hhcmVzX2FsbCA8LSANCiMgICB0b3BpY3MgJT4lIA0KIyAgIGdyb3VwX2J5KGFubm90YXRpb25fdmFsdWUpICU+JSANCiMgICBzdW1tYXJpc2UobnRhZyA9IG4oKSkgJT4lIA0KIyAgIG11dGF0ZSh0b3BpY19zaGFyZSA9IG50YWcgLyBzdW0obnRhZyksDQojICAgICAgICAgIGFubm90YXRvciA9ICIoYWxsKSIpDQojIA0KIyB0b3BpY19zaGFyZXMgJTw+JSANCiMgICBiaW5kX3Jvd3ModG9waWNfc2hhcmVzX2FsbCkNCiMgDQojICMgb3JkZXIgdG9waWNzIGluIGRlc2NlbmRpbmcgb3JkZXIgb2YgZnJlcXVlbmN5IGluIChhbGwpDQojIHRvcGljc19vcmRlcmVkIDwtIA0KIyAgIHRvcGljX3NoYXJlc19hbGwgJT4lIA0KIyAgIGFycmFuZ2UoZGVzYyh0b3BpY19zaGFyZSkpICU+JSANCiMgICBzZWxlY3QoYW5ub3RhdGlvbl92YWx1ZSkgJT4lIA0KIyAgIHVubGlzdCgpDQojIA0KIyB0b3BpY19zaGFyZXMNCg0KIyBTaW1wbGVyIGNvZGUgdG8gb3JkZXIgdG9waWNzIGJ5IG92ZXJhbGwgcG9wdWxhcml0eQ0KdGFnc19vcmRlcmVkX2J5X2RlY3JlYXNpbmdfcG9wdWxhcml0eSA8LSANCiAgdG9waWNzICU+JSANCiAgZ3JvdXBfYnkoYW5ub3RhdGlvbl92YWx1ZSkgJT4lIA0KICBzdW1tYXJpc2UobiA9IG4oKSkgJT4lIA0KICBhcnJhbmdlKGRlc2MobikpICU+JSANCiAgc2VsZWN0KGFubm90YXRpb25fdmFsdWUpICU+JSANCiAgdW5saXN0KHVzZS5uYW1lcyA9IEZBTFNFKQ0KDQpgYGANCg0KDQpWaXN1YWxpc2UuDQoNCmBgYHtyLCBmaWcuaGVpZ2h0PTZ9DQojIHRvcGljX3NoYXJlcyAlPiUgIA0KIyAgIGdncGxvdChhZXMoeCA9IGFubm90YXRpb25fdmFsdWUpKSArDQojICAgZ2VvbV9iYXIoYWVzKHkgPSB0b3BpY19zaGFyZSksIHN0YXQgPSAiaWRlbnRpdHkiKSArDQojICAgZmFjZXRfZ3JpZChhbm5vdGF0b3IgfiAuKSArDQojICAgdGhlbWUoYXhpcy50ZXh0LnggPSBlbGVtZW50X3RleHQoYW5nbGUgPSA5MCwgaGp1c3QgPSAwLjUsIHZqdXN0ID0gMC41KSkgKw0KIyAgIHNjYWxlX3hfZGlzY3JldGUobmFtZSA9IE5VTEwsDQojICAgICAgICAgICAgICAgICAgICBsYWJlbHMgPSBmdW5jdGlvbih4KSBzdHJfd3JhcCh4LCB3aWR0aCA9IDE1KSwNCiMgICAgICAgICAgICAgICAgICAgIGxpbWl0cyA9IHRvcGljc19vcmRlcmVkKSArDQojICAgc2NhbGVfeV9jb250aW51b3VzKG5hbWUgPSAiU2hhcmUgb2YgYWxsIHRvcGljIHRhZ3MgYXBwbGllZCIpDQoNCiMgdG9waWNzICU+JQ0KIyAgIGdncGxvdChhZXMoeCA9IGFubm90YXRpb25fdmFsdWUpKSArDQojICAgZ2VvbV9iYXIoYWVzKHkgPSAuLnByb3AuLiwgZ3JvdXAgPSAxKSkgKyAjIGdyb3VwID0gMSBuZWVkZWQgdG8gZ2V0IHByb3BvcnRpb25zIHdpdGhpbiBhbm5vdGF0b3IsIHJhdGhlciB0aGFuIGFzIHByb3BvcnRpb24gb2YgbWFyZ2luIA0KIyAgIGZhY2V0X2dyaWQoYW5ub3RhdG9yIH4gLiwgbWFyZ2lucyA9IFRSVUUpICsNCiMgICB0aGVtZShheGlzLnRleHQueCA9IGVsZW1lbnRfdGV4dChhbmdsZSA9IDkwLCBoanVzdCA9IDAuNSwgdmp1c3QgPSAwLjUpKSArDQojICAgc2NhbGVfeF9kaXNjcmV0ZShuYW1lID0gTlVMTCwNCiMgICAgICAgICAgICAgICAgICAgIGxhYmVscyA9IGZ1bmN0aW9uKHgpIHN0cl93cmFwKHgsIHdpZHRoID0gMTUpLA0KIyAgICAgICAgICAgICAgICAgICAgbGltaXRzID0gdGFnc19vcmRlcmVkX2J5X2RlY3JlYXNpbmdfcG9wdWxhcml0eSkgKw0KIyAgIHNjYWxlX3lfY29udGludW91cyhuYW1lID0gIlNoYXJlIG9mIHRhZ3MgYnkgYW5ub3RhdG9yIikNCg0KZ2V0X3RhZ3Nfb3JkZXJlZF9ieV9kZWNyZWFzaW5nX3BvcHVsYXJpdHkgPC0gZnVuY3Rpb24oYW5ub3RhdGlvbnMsIHRhZ3MgPSBOVUxMKSB7DQogICMgZ2V0IChzb3J0ZWQpIGxpc3Qgb2YgdGFncyB1c2VkIGluIGFubm90YXRpb25zDQogIHRhZ3NfdXNlZCA8LSANCiAgICAgIGFubm90YXRpb25zICU+JSANCiAgICAgIGdyb3VwX2J5KGFubm90YXRpb25fdmFsdWUpICU+JSANCiAgICAgIHN1bW1hcmlzZShuID0gbigpKSAlPiUgDQogICAgICBhcnJhbmdlKGRlc2MobikpICU+JSANCiAgICAgIHNlbGVjdChhbm5vdGF0aW9uX3ZhbHVlKSAlPiUgDQogICAgICB1bmxpc3QodXNlLm5hbWVzID0gRkFMU0UpDQogICMgaWYgYW4gZXhwbGljaXQgbGlzdCBvZiBwb3NzaWJsZSB0YWdzIGlzIGdpdmVuIHRoZW4gY2hlY2sgZm9yLi4uDQogIGlmICghaXMubnVsbCh0YWdzKSkgew0KICAgICMgLi4uIHRhZ3MgdXNlZCBpbiB0aGUgYW5ub3RhdGlvbnMgdGhhdCBhcmVuJ3QgYWxzbyBpbiBgdGFnc2ANCiAgICBwcmV0dHlfcHJpbnRfdGFncyA8LSBmdW5jdGlvbih0YWdzKSBwYXN0ZTAodGFnc191bmV4cGVjdGVkLCAiIiwgY29sbGFwc2UgPSAiXG4iKQ0KICAgIHRhZ3NfdW5leHBlY3RlZCA8LSBzZXRkaWZmKHRhZ3NfdXNlZCwgdGFncykNCiAgICBpZiAobGVuZ3RoKHRhZ3NfdW5leHBlY3RlZCkgPiAwKSB3YXJuaW5nKCJUYWdzIGluIGBhbm5vdGF0aW9uc2AgdGhhdCB3ZXJlIG5vdCBpbiBgdGFnc2A6ICIsIHByZXR0eV9wcmludF90YWdzKHRhZ3NfdW5leHBlY3RlZCkpDQogICAgIyAuLi4gdW51c2VkIHRhZ3MNCiAgICB0YWdzX3VudXNlZCA8LSBzZXRkaWZmKHRhZ3MsIHRhZ3NfdXNlZCkNCiAgICBpZiAobGVuZ3RoKHRhZ3NfdW5leHBlY3RlZCkgPiAwKSB3YXJuaW5nKCJUYWdzIGluIGB0YWdzYCB0aGF0IHdlcmUgbm90IHVzZWQgaW4gYGFubm90YXRpb25zYDogIiwgcHJldHR5X3ByaW50X3RhZ3ModGFnc191bnVzZWQpKQ0KICAgIHRhZ3MgPC0gYyh0YWdzX3VzZWQsIHRhZ3NfdW51c2VkKQ0KICB9IGVsc2Ugew0KICAgIHRhZ3MgPC0gdGFnc191c2VkDQogIH0gDQogIHRhZ3MNCn0NCg0KcGxvdF9tYXJnaW5hbF90YWdfdXNlX2J5X2Fubm90YXRvciA8LSANCiAgZnVuY3Rpb24oYW5ub3RhdGlvbnMsIHRhZ3MgPSBOVUxMLCB0YWdfb3JkZXIgPSBjKCJ2YWx1ZSIsICJwb3B1bGFyaXR5IikpIHsNCiAgDQogIHRhZ19vcmRlciA8LSBtYXRjaC5hcmcodGFnX29yZGVyKQ0KICB0YWdzX29yZGVyZWQgPC0gc3dpdGNoKHRhZ19vcmRlciwgDQogICAgICAgICAgICAgICAgICAgICAgICAgcG9wdWxhcml0eSA9IGdldF90YWdzX29yZGVyZWRfYnlfZGVjcmVhc2luZ19wb3B1bGFyaXR5KGFubm90YXRpb25zKSwNCiAgICAgICAgICAgICAgICAgICAgICAgICB2YWx1ZSA9IHNvcnQodW5pcXVlKGFubm90YXRpb25zJGFubm90YXRpb25fdmFsdWUpKSkgIA0KICANCiAgYW5ub3RhdGlvbnMgJT4lDQogICAgZ2dwbG90KGFlcyh4ID0gYW5ub3RhdGlvbl92YWx1ZSkpICsNCiAgICBnZW9tX2JhcihhZXMoeSA9IC4ucHJvcC4uLCBncm91cCA9IDEpKSArICMgZ3JvdXAgPSAxIG5lZWRlZCB0byBnZXQgcHJvcG9ydGlvbnMgd2l0aGluIGFubm90YXRvciwgcmF0aGVyIHRoYW4gYXMgcHJvcG9ydGlvbiBvZiBtYXJnaW4gDQogICAgZmFjZXRfZ3JpZChhbm5vdGF0b3IgfiAuLCBtYXJnaW5zID0gVFJVRSkgKw0KICAgIHRoZW1lKGF4aXMudGV4dC54ID0gZWxlbWVudF90ZXh0KGFuZ2xlID0gOTAsIGhqdXN0ID0gMC41LCB2anVzdCA9IDAuNSkpICsNCiAgICBzY2FsZV94X2Rpc2NyZXRlKG5hbWUgPSBOVUxMLA0KICAgICAgICAgICAgICAgICAgICAgbGFiZWxzID0gZnVuY3Rpb24oeCkgc3RyX3dyYXAoeCwgd2lkdGggPSAxNSksDQogICAgICAgICAgICAgICAgICAgICBsaW1pdHMgPSB0YWdzX29yZGVyZWQpICsNCiAgICBzY2FsZV95X2NvbnRpbnVvdXMobmFtZSA9ICJTaGFyZSBvZiB0YWdzIGJ5IGFubm90YXRvciIpDQp9DQpgYGANCg0KRHJvcHBpbmcgbm9uLUJvRSB0YWdzLi4uDQoNCmBgYHtyLCBmaWcuaGVpZ2h0PTZ9DQojIyMgV0FSTklORyEgSGFyZHdpcmVkIHRvcGljIHRhZyBzdHJpbmdzDQpub25fQm9FX3RhZ3MgPC0gYygiR292ZXJubWVudCIsICJOb3QgQm9FIG9yIGdvdmVybm1lbnQiKQ0KdG9waWNfc2hhcmVzICU+JSAgDQogIGZpbHRlcighKGFubm90YXRpb25fdmFsdWUgJWluJSBub25fQm9FX3RhZ3MpKSAlPiUgDQogIGdncGxvdChhZXMoeCA9IGFubm90YXRpb25fdmFsdWUpKSArDQogIGdlb21fYmFyKGFlcyh5ID0gdG9waWNfc2hhcmUpLCBzdGF0ID0gImlkZW50aXR5IikgKw0KICBmYWNldF9ncmlkKGFubm90YXRvciB+IC4pICsNCiAgdGhlbWUoYXhpcy50ZXh0LnggPSBlbGVtZW50X3RleHQoYW5nbGUgPSA5MCwgaGp1c3QgPSAwLjUsIHZqdXN0ID0gMC41KSkgKw0KICBzY2FsZV94X2Rpc2NyZXRlKG5hbWUgPSBOVUxMLA0KICAgICAgICAgICAgICAgICAgIGxhYmVscyA9IGZ1bmN0aW9uKHgpIHN0cl93cmFwKHgsIHdpZHRoID0gMTUpLA0KICAgICAgICAgICAgICAgICAgIGxpbWl0cyA9IHRvcGljc19vcmRlcmVkWyEodG9waWNzX29yZGVyZWQgJWluJSBub25fQm9FX3RhZ3MpXSkgKw0KICBzY2FsZV95X2NvbnRpbnVvdXMobmFtZSA9ICJTaGFyZSBvZiBhbGwgdG9waWMgdGFncyBhcHBsaWVkIikNCmBgYA0KDQoNCiMjIENvLW9jY3VyZW5jZSBvZiB0YWdzIHdpdGhpbiBhbm5vdGF0b3IgKG11bHRpcGxlIHRhZ2dpbmcpDQoNClJldXNhYmxlIHBsb3R0aW5nIGZ1bmN0aW9uLg0KDQpgYGB7cn0NCiMgTm90ZTogY291bGQgbWFrZSB0aGUgYmVsb3cgbGVzcyBzcGVjaWZpYyB0byBhbm5vdGF0aW9uDQoNCmFubm90YXRvcnNfc3Vic2V0IDwtIGZ1bmN0aW9uKGFubm90YXRpb25zLCBhbm5vdGF0b3JzID0gTlVMTCkgew0KICAjIERlZmF1bHQgdG8gYWxsIGFubm90YXRvcnMNCiAgIyBXQVJOSU5HISBIYXJkd2lyZWQgY29sdW1uIG5hbWUgImFubm90YXRvciINCiAgaWYgKCFpcy5udWxsKGFubm90YXRvcnMpKSBkZiA8LSBkcGx5cjo6ZmlsdGVyKGFubm90YXRpb25zLCBhbm5vdGF0b3IgJWluJSBhbm5vdGF0b3JzKQ0KICBlbHNlIGRmIDwtIGFubm90YXRpb25zDQogIGRmDQp9DQoNCiMgVGFrZSBhIGxpc3Qgb2YgYW5ub3RhdGlvbnMsIGJ5IGRvY3VtZW50LCBhbm5vdGF0b3IsIGFuZCBhbm5vdGF0aW9uIHZhbHVlICh0YWcpLCBhbmQgY2FsY3VsYXRlIGFncmVlbWVudCBhbW9uZyBhIHNwZWNpZmllZCBzdWJzZXQgb2YgYW5ub3RhdG9ycy4NCiMjIyBROiBTaG91bGQgd2UgY29tcGxldGUgbWlzc2luZyBwYWlycyB3aXRoIHplcm9zPyBPciBwcm92aWRlIGFuIG9wdGlvbiB0byBkbyBzbywgd2l0aCBjb3JyZXNwb25kaW5nIGZ1bmN0aW9uIGFyZ3VtZW50Pw0KYWdyZWVtZW50IDwtIGZ1bmN0aW9uKGFubm90YXRpb25zLCBhbm5vdGF0b3JzID0gTlVMTCkgew0KICBkZiA8LSBhbm5vdGF0b3JzX3N1YnNldChhbm5vdGF0aW9ucywgYW5ub3RhdG9ycykNCiAgIyBXQVJOSU5HISBIYXJkd2lyZWQgY29sdW1uIG5hbWUgImFubm90YXRpb25fdmFsdWUiLCAiZG9jX2lkIg0KICB3aWR5cjo6cGFpcndpc2VfY291bnQoZGYsIGFubm90YXRpb25fdmFsdWUsIGRvY19pZCwgZGlhZyA9IFRSVUUpDQp9DQoNCmdldF9hbm5vdGF0b3JzIDwtIGZ1bmN0aW9uKGFubm90YXRpb25zKSB1bmlxdWUoYW5ub3RhdGlvbnMkYW5ub3RhdG9yKQ0KDQojIyMgQTogY2hlY2sgdGhhdCBpdGVtMSBjb3JyZXNwb25kcyB0byBhbm5vdGF0b3IxIGFuZCBsaWtld2lzZSBmb3IgMg0KYWdyZWVtZW50X3BhaXIgPC0gZnVuY3Rpb24oYW5ub3RhdGlvbnMsIGFubm90YXRvcnMpIHsNCiAgc3RvcGlmbm90KGlzLmNoYXJhY3Rlcihhbm5vdGF0b3JzKSAmJiBsZW5ndGgoYW5ub3RhdG9ycykgPT0gMikNCiAgZGYgPC0gYWdyZWVtZW50KGFubm90YXRpb25zLCBhbm5vdGF0b3JzKQ0KICBkZiRhbm5vdGF0b3IxID0gYW5ub3RhdG9yc1sxXQ0KICBkZiRhbm5vdGF0b3IyID0gYW5ub3RhdG9yc1syXQ0KICBkZg0KfQ0KDQojIFJvdy1iaW5kIHRvZ2V0aGVyIGFsbCBwYWlyd2lzZSBjb21iaW5hdGlvbnMgb2YgYW5ub3RhdG9ycywgcGx1cyBvcHRpb25hbGx5IG1hcmdpbnMNCmFncmVlbWVudF9wYWlyd2lzZSA8LSBmdW5jdGlvbihhbm5vdGF0aW9ucywgYW5ub3RhdG9ycyA9IE5VTEwsIGRpYWcgPSBUUlVFKSB7DQogICMgSWYgYW4gYW5ub3RhdG9yIGlzIGxpc3RlZCBpbiB0aGUgYW5ub3RhdG9ycyBhcmd1bWVudCwgYnV0IGRvZXNuJ3QgYXBwZWFyIGluIHRoZSBhbm5vdGF0aW9ucyBkYXRhc2V0LCB0aGF0IGFubm90YXRvciB3aWxsIGJlIGltcHV0ZWQgdG8gZXhpc3QgYW5kIGltcGxpY2l0bHkgaGF2ZSANCiAgZGYgPC0gYW5ub3RhdG9yc19zdWJzZXQoYW5ub3RhdGlvbnMsIGFubm90YXRvcnMpDQogICMgSWYgYW5ub3RhdG9ycyBhcmd1bWVudCBpcyBsZWZ0IE5VTEwgdGhlbiBpbmZlciBhbm5vdGF0b3JzIGxpc3QgZnJvbSBhbm5vdGF0aW9ucyBkYXRhZnJhbWUgKHNvIHdvbid0IHNlZSBhbm5vdGF0b3JzIHdobyBleGlzdCBidXQgZGlkbid0IGNvbnRyaWJ1dGUgYW55IGFubm90YXRpb25zKQ0KICBpZiAoaXMubnVsbChhbm5vdGF0b3JzKSkgYW5ub3RhdG9ycyA8LSBnZXRfYW5ub3RhdG9ycyhhbm5vdGF0aW9ucykNCiAgYW5ub3RhdG9yX3BhaXJzIDwtIA0KICAgIGlmIChkaWFnKSB7DQogICAgICB0ZW1wIDwtIGd0b29sczo6cGVybXV0YXRpb25zKGxlbmd0aChhbm5vdGF0b3JzKSwgMiwgYW5ub3RhdG9ycywgcmVwZWF0cy5hbGxvd2VkID0gVFJVRSkNCiAgICAgIHNwbGl0KHRlbXAsIHJvdyh0ZW1wKSl9IGVsc2UgY29tYm4oYW5ub3RhdG9ycywgMiwgc2ltcGxpZnkgPSBGQUxTRSkNCiAgcHVycnI6Om1hcF9kZihhbm5vdGF0b3JfcGFpcnMsIH5hZ3JlZW1lbnRfcGFpcihhbm5vdGF0aW9ucywgLngpKSANCn0NCg0KIyBCdWJibGUgcGxvdCBvbiBzcXVhcmUgbWF0cml4IG9mIHBvdGVudGlhbCBhbm5vdGF0aW9uIHZhbHVlcyANCmNyb3NzcGxvdCA8LSBmdW5jdGlvbihkZiwgdGFnc19vcmRlcmVkKSB7DQogICMgV0FSTklORyEgSGFyZHdpcmVkIGNvbHVtbiBuYW1lcyAiaXRlbTEiIGFuZCAiaXRlbTIiDQogICMgV0FSTklORyEgSGFyZHdpcmVkIGNvbnN0YW50ICJ0b3BpY3Nfb3JkZXJlZCIsIHRvIGJlIHByb3ZpZGVkIGZyb20gY2FsbGluZyBlbnZpcm9ubWVudA0KICBnZ3Bsb3QoZGYsIGFlcyh4ID0gaXRlbTEsIHkgPSBpdGVtMikpICsNCiAgICBnZW9tX3BvaW50KGFlcyhzaXplID0gbiwgY29sb3VyID0gbG9nKG4pKSkgKyANCiAgICBzY2FsZV95X2Rpc2NyZXRlKG5hbWUgPSBOVUxMLCBsaW1pdHMgPSByZXYodGFnc19vcmRlcmVkKSwgcG9zaXRpb24gPSAicmlnaHQiKSArIA0KICAgIHNjYWxlX3hfZGlzY3JldGUobmFtZSA9IE5VTEwsIGxpbWl0cyA9IHRhZ3Nfb3JkZXJlZCwgcG9zaXRpb24gPSAidG9wIikgICsgDQogICAgdGhlbWUoYXhpcy50ZXh0LnggID0gZWxlbWVudF90ZXh0KGFuZ2xlID0gOTAsIHZqdXN0ID0gMC41LCBoanVzdCA9IDApKQ0KfQ0KDQpjcm9zc3Bsb3RfcGFpcndpc2UgPC0gZnVuY3Rpb24oYW5ub3RhdGlvbnMsIGFubm90YXRvcnMgPSBOVUxMLCBtYXJnaW5zID0gVFJVRSwgY3V0b2ZmID0gMCwgdGFnX29yZGVyID0gYygidmFsdWUiLCAicG9wdWxhcml0eSIpKSB7DQogICMgV0FSTklORyEgSGFyZHdpcmVkIGNvbHVtbiBuYW1lICJuIg0KICBkZiA8LSBhZ3JlZW1lbnRfcGFpcndpc2UoYW5ub3RhdGlvbnMsIGFubm90YXRvcnMpDQogIGRmIDwtIGRmW2RmJG4gPiBjdXRvZmYsXQ0KICAjIFdBUk5JTkchIEhhcmR3aXJlZCBjb2x1bW4gbmFtZXMgImFubm90YXRvcjEiIGFuZCAiYW5ub3RhdG9yMiINCiAgdGFnX29yZGVyIDwtIG1hdGNoLmFyZyh0YWdfb3JkZXIpDQogIHRhZ3Nfb3JkZXJlZCA8LSBzd2l0Y2godGFnX29yZGVyLCANCiAgICAgICAgICAgICAgICAgICAgICAgICBwb3B1bGFyaXR5ID0gZ2V0X3RhZ3Nfb3JkZXJlZF9ieV9kZWNyZWFzaW5nX3BvcHVsYXJpdHkoYW5ub3RhdGlvbnMpLA0KICAgICAgICAgICAgICAgICAgICAgICAgIHZhbHVlID0gc29ydCh1bmlxdWUoYW5ub3RhdGlvbnMkYW5ub3RhdGlvbl92YWx1ZSkpKQ0KICBjcm9zc3Bsb3QoZGYsIHRhZ3Nfb3JkZXJlZCkgKyBmYWNldF9ncmlkKGFubm90YXRvcjEgfiBhbm5vdGF0b3IyLCBtYXJnaW5zLCBzd2l0Y2ggPSAieSIpDQp9DQoNCiMgV3JhcHBlciB0byBzaGFwZSB0aGUgZGYgYW5kIHRoZW4gY2FsbCB0aGUgcGxvdCBmdW5jdGlvbg0KY3Jvc3NwbG90X2Zyb21fYW5ub3RhdGlvbnMgPC0gZnVuY3Rpb24oYW5ub3RhdGlvbnMsIGFubm90YXRvcnMgPSBOVUxMKSB7DQogIGRmIDwtIGFncmVlbWVudChhbm5vdGF0aW9ucykNCiAgY3Jvc3NwbG90KGRmKQ0KfQ0KYGBgDQoNCmBgYHtyfQ0KdG9waWNfb2NjdXJyZW5jZXNfd2l0aGluX2Fubm90YXRvciA8LSANCiAgdG9waWNzICU+JSANCiAgdW5pdGUoZG9jdW1lbnRfYW5ub3RhdG9yLCBkb2NfaWQsIGFubm90YXRvcikgJT4lICMgcGFpcndpc2VfY291bnQgd2lsbCBvbmx5IHRha2UgYSBzaW5nbGUgY29sdW1uIGZvciB0aGUgZ3JvdXBpbmcgdmFyaWFibGUNCiAgd2lkeXI6OnBhaXJ3aXNlX2NvdW50KGFubm90YXRpb25fdmFsdWUsIGRvY3VtZW50X2Fubm90YXRvciwgZGlhZyA9IEZBTFNFKQ0KY3Jvc3NwbG90KHRvcGljX29jY3VycmVuY2VzX3dpdGhpbl9hbm5vdGF0b3IpDQpgYGANCg0KDQojIyBBZ3JlZW1lbnQgLyBkaXNhZ3JlZW1lbnQgYnkgcGFpcnMgb2YgYW5ub3RhdG9ycw0KDQpQYWlyd2lzZSBjb2NjdXJyZW5jZXMgb2YgdG9waWNzIG9uIHRoZSBzYW1lIGRvY3VtZW50LCBmcm9tIGFueSBhbm5vdGF0b3IsIGluY2x1ZGluZyBtdWx0aXBsZSB0b3BpYyB0YWdzIGFwcGxpZWQgYnkgc2FtZSBhbm5vdGF0b3IgdG8gc2FtZSBkb2N1bWVudC4gQSBnaXZlbiB0YWcgd2lsbCBiZSBjb3VudGVkIChtLTEpIHRpbWVzLCB3aGVyZSBtIGlzIHRoZSBudW1iZXIgb2YgdGFncyBhcHBsaWVkIGJ5IGFueSBhbm5vdGF0b3Igb24gYSBnaXZlbiBkb2N1bWVudCwgaS5lLiBvbmNlIGZvciBlYWNoIHBhaXIgb2YgdGFncyB0aGF0IHRoZSB0YWcgYXBwZWFycyBpbi4NCg0KTm90ZSB0aGF0IHRvIHRoZSBleHRlbnQgdGhhdCB0aGVyZSBhcmUgbXVsdGlwbGUgdGFncyBmcm9tIHRoZSBzYW1lIGFubm90YXRvciAob24gYSBnaXZlbiBkb2N1bWVudCkgd2l0aCB0aGUgdGFncyBhcHBsaWVkIGJ5IGRpZmZlcmVudCBhbm5vdGF0b3JzLCB0aGlzIHBsb3QgZG9lcyAqbm90KiBwcm92aWRlIGEgY29tcGxldGVseSBjbGVhbiBtZWFzdXJlIG9mIGFncmVlbWVudCBiZXR3ZWVuIGFubm90YXRvcnMgKGl0IGNvbmZsYXRlcyBjb29jY3VyZW5jZSB3aXRoaW4gYW5ub3RhdG9yKS4NCg0KQnV0IEkgZG9uJ3Qgc2VlIGEgc3RyYWlnaHRmb3J3YXJkIGhvdyB0byBtZWFzdXJlIGFncmVlbWVudCB3aGVyZSB0aGVyZSBhcmUgbXVsdGlwbGUgdGFncyBwZXIgYW5ub3RhdG9yLg0KDQpgYGB7cn0NCmNyb3NzcGxvdF9wYWlyd2lzZSh0b3BpY3MpDQpgYGANCg0KQ2Vuc29yIGNlbGxzIHdpdGggdmVyeSBmZXcgY28tb2NjdXJyZW5jZXMsIHRvIG1ha2UgaXQgdmlzdWFsbHkgZWFzaWVyIHRvIGlkZW50aWZ5IHRoZSBtYWluIGZlYXR1cmVzIG9mIGRpc2FncmVlbWVudC4NCg0KYGBge3J9DQpjcm9zc3Bsb3RfcGFpcndpc2UodG9waWNzLCBjdXRvZmYgPSAyKQ0KYGBgDQoNCg0KQ29vY2N1cnJlbmNlcyBjYW4gYWxzbyBiZSBjb3VudGVkIHdpdGhpbiBzdWJzZXRzIG9mIGFubm90YXRvcnMuIFNwZWNpYWwgY2FzZXMgaW5jbHVkZSB3aXRoaW4gdGhlIHNhbWUgYW5ub3RhdG9yLCBpLmUuIHdoZXJlIGFubm90YXRvcnMgYXBwbHkgbXVsdGlwbGUgdGFncywgd2hpY2ggZG8gdGhleSB0ZW5kIHRvIGFwcGx5IHRvZ2V0aGVyOyBhbmQgd2l0aGluIHBhaXJzIG9mIGFubm90YXRvcnMuDQoNCg0KIyMgQ28tb2NjdXJyZW5jZXMgYmV0d2VlbiBwYWlycyBvZiBhbm5vdGF0b3JzLg0KDQpgYGB7cn0NCiMgdG9waWNfY29vY2N1cnJlbmNlcyA8LSANCiMgICB0b3BpY3MgJT4lIA0KIyAgIHdpZHlyOjpwYWlyd2lzZV9jb3VudChhbm5vdGF0aW9uX3ZhbHVlLCBkb2NfaWQsIGRpYWcgPSBUUlVFKSAjIGxvc2VzIGFubm90YXRvciBpZA0KDQojY3Jvc3NwbG90KHRvcGljX2Nvb2NjdXJyZW5jZXMpDQpjcm9zc3Bsb3RfZnJvbV90b3BpY3ModG9waWNzKQ0KYGBgDQoNCg0KIyMgRG9jdW1lbnQtYnktZG9jdW1lbnQgdmlldw0KDQpgYGB7cn0NCnRvcGljX3VuaXF1ZV9hbm5vdGF0b3IgPC0gDQogIHRvcGljcyAlPiUgDQogIHNlbGVjdChkb2NfaWQsIGFubm90YXRvciwgYW5ub3RhdGlvbl92YWx1ZSkgJT4lIA0KICBncm91cF9ieShkb2NfaWQsIGFubm90YXRvcikgJT4lIA0KICBtdXRhdGUoZG9jdW1lbnRfYW5ub3RhdG9yX3NlcSA9IHJvd19udW1iZXIoKSwNCiAgICAgICAgIGFubm90YXRvcl91bmlxdWUgPSBpZmVsc2UoZG9jdW1lbnRfYW5ub3RhdG9yX3NlcSA9PSAxLCBhbm5vdGF0b3IsIHBhc3RlMChhbm5vdGF0b3IsICJfMiIpKSkgJT4lIA0KICB1bmdyb3VwKCkgJT4lIA0KICBzZWxlY3QoLWFubm90YXRvciwgLWRvY3VtZW50X2Fubm90YXRvcl9zZXEpICU+JSANCiAgc3ByZWFkKGFubm90YXRvcl91bmlxdWUsIGFubm90YXRpb25fdmFsdWUpDQp0b3BpY191bmlxdWVfYW5ub3RhdG9yDQpgYGANCg0KDQoNCiMjIEFncmVlbWVudCAvIGRpc2FncmVlbWVudCBieSBkb2N1bWVudA0KDQpgYGB7cn0NCnRvcGljc19wZXJfZG9jIDwtIA0KICB0b3BpY3MgJT4lDQogIGdyb3VwX2J5KGRvY19pZCkgJT4lIA0KICBzdW1tYXJpc2Uobl9kaXN0aW5jdF90b3BpYyA9IG5fZGlzdGluY3QoYW5ub3RhdGlvbl92YWx1ZSkpDQpgYGANCg0KQ29tcGxldGUgYWdyZWVtZW50Lg0KDQpgYGB7cn0NCnRvcGljc19wZXJfZG9jICU+JSANCiAgZmlsdGVyKG5fZGlzdGluY3RfdG9waWMgPT0gMSkNCmBgYA0KDQpEb2N1bWVudHMgd2l0aCBzb21lIGRpc2FncmVlbWVudC4NCg0KYGBge3J9DQp0b3BpY191bmlxdWVfYW5ub3RhdG9yICU+JSANCiAgbGVmdF9qb2luKHRvcGljc19wZXJfZG9jLCAiZG9jX2lkIikgJT4lIA0KICBmaWx0ZXIobl9kaXN0aW5jdF90b3BpYyA+IDEpDQoNCmBgYA0KDQoNCiMgVG9waWNzDQoNCmBgYHtyfQ0KIyMjIEE6IGltcHV0ZSBhIG5vbl9ib0UgY2F0ZWdvcnkNCnBsb3RfbWFyZ2luYWxfdGFnX3VzZV9ieV9hbm5vdGF0b3IodG9waWNzLCB0YWdfb3JkZXIgPSAicG9wdWxhcml0eSIpDQpgYGANCg0KYGBge3J9DQpjcm9zc3Bsb3RfcGFpcndpc2UodG9waWNzLCBjdXRvZmYgPSAwLCB0YWdfb3JkZXIgPSAicG9wdWxhcml0eSIpDQpgYGANCg0KDQoNCg0KIyAiTmF0dXJlIiB0YWdzDQoNCmBgYHtyfQ0KbmF0dXJlcyA8LSANCiAgYW5ub3RhdGlvbnMgJT4lIA0KICBmaWx0ZXIoYW5ub3RhdGlvbl90eXBlID09ICJuYXR1cmUiKQ0KDQpwbG90X21hcmdpbmFsX3RhZ191c2VfYnlfYW5ub3RhdG9yKG5hdHVyZXMsIHRhZ19vcmRlciA9ICJwb3B1bGFyaXR5IikNCmBgYA0KDQpgYGB7cn0NCmNyb3NzcGxvdF9wYWlyd2lzZShuYXR1cmVzLCBjdXRvZmYgPSAwLCB0YWdfb3JkZXIgPSAicG9wdWxhcml0eSIpDQpgYGANCg0KDQojIFNlbnRpbWVudA0KDQpFeHRyYWN0IHNlbnRpbWVudCB0YWdzIGludG8gYSBkYXRhZnJhbWUuDQoNCmBgYHtyfQ0Kc2VudGltZW50cyA8LSANCiAgYW5ub3RhdGlvbnMgJT4lIA0KICBmaWx0ZXIoYW5ub3RhdGlvbl90eXBlID09ICJzZW50aW1lbnQiKSAlPiUgDQogIHNlbGVjdChkb2NfaWQsIGlkX2Fubm90YXRpb24sIGFubm90YXRvciwgYW5ub3RhdGlvbl92YWx1ZSkNCmBgYA0KDQpNYXAgc2VudGltZW50cyBzdHJpbmdzIHRvIG51bWJlcnMuDQoNCmBgYHtyfQ0KIyBXQVJOSU5HISBIYXJkd2lyZWQgc3RyaW5ncw0Kc2VudGltZW50X21hcF9jaHJfdG9fbnVtZXJpY19jb3JyZWN0IDwtIA0KICB0aWJibGU6OnRyaWJibGUoDQogICAgfmFubm90YXRpb25fdmFsdWUsIH5zY29yZSwNCiAgICAiMS4gU3Ryb25nbHkgTmVnYXRpdmUiLCAtM0wsDQogICAgIjIuIE5lZ2F0aXZlIiAgICAgICAgICwgLTJMLA0KICAgICIzLiBXZWFrbHkgTmVnYXRpdmUiICAsIC0xTCwNCiAgICAiNC4gTmV1dHJhbCIgICAgICAgICAgLCAgMEwsDQogICAgIjUuIFdlYWtseSBQb3NpdGl2ZSIgICwgKzFMLA0KICAgICI2LiBQb3NpdGl2ZSIgICAgICAgICAsICsyTCwNCiAgICAiNy4gU3Ryb25nbHkgUG9zaXRpdmUiLCArM0wsDQogICAgIkNvdWxkbid0IHNjb3JlIiAgICAgICwgTkFfaW50ZWdlcl8NCiAgKQ0KDQpzZW50aW1lbnRfbWFwX2Nocl90b19udW1lcmljXzIwMTcwNDI2IDwtIA0KICB0aWJibGU6OnRyaWJibGUoDQogICAgfmFubm90YXRpb25fdmFsdWUsIH5zY29yZSwNCiAgICAiMS4gU3Ryb25nbHkgTmVnYXRpdmUiLCAtM0wsDQogICAgIjIuIE5lZ2F0aXZlIiAgICAgICAgICwgLTJMLA0KICAgICIzLiBXZWFrbHkgTmVnYXRpdmUiICAsIC0xTCwNCiAgICAiNC4gV2Vha2x5IFBvc2l0aXZlIiAgLCArMUwsDQogICAgIjUuIFBvc2l0aXZlIiAgICAgICAgICwgKzJMLA0KICAgICI2LiBTdHJvbmdseSBQb3NpdGl2ZSIsICszTCwNCiAgICAiNy4gQ291bGRuJ3Qgc2NvcmUiICAgICAgLCAgMEwNCiAgKQ0KDQoNCiMgTm90ZSB0aGlzIHdpbGwgbHVtcCB1bnNjb3JlZCBkb2N1bWVudHMgaW4gd2l0aCBleHBsaWNpdCAiQ291bGRuJ3Qgc2NvcmUiIHRhZ3MsIHNvIHRvIGNoZWNrIGZvciBkb2N1bWVudHMgbGFja2luZyBhIHNlbnRpbWVudCB0YWcsIEkgd291bGQgbmVlZCB0byBkbyBzbyB3aXRoIE5BX2NoYXJhY3Rlcl8gZWFybHkgb24NCnNlbnRpbWVudHMgJTw+JQ0KICBsZWZ0X2pvaW4oc2VudGltZW50X21hcF9jaHJfdG9fbnVtZXJpY18yMDE3MDQyNiwgYnkgPSAiYW5ub3RhdGlvbl92YWx1ZSIpICU+JSANCiAgcmVuYW1lKGFubm90YXRpb25fdmFsdWVfc3RyID0gYW5ub3RhdGlvbl92YWx1ZSwNCiAgICAgICAgIGFubm90YXRpb25fdmFsdWUgPSBzY29yZSkgIyBrZWVwIHZhcm5hbWUgZ2VuZXJpYyB0byBlYXNlIHJldXNlIG9mIG90aGVyIGNvZGUgKHdvdWxkIGJlY29tZSB1bm5lY2Vzc2FyeSBpZiBwYXNzaW5nIGFzIGZ1bmN0aW9uIGFyZ3VtZW50KQ0KYGBgDQoNCg0KDQoNCiMjIE1lYW4gYnkgYW5ub3RhdG9yDQoNClRyZWF0aW5nIHNlbnRpbWVudCBzY29yZXMgYXMgb24gYW4gaW50ZXJ2YWwgc2NhbGUgZnJvbSAtMyAoc3Ryb25nbHkgbmVnYXRpdmUpIHRvICszIChzdHJvbmdseSBwb3NpdGl2ZSkuDQoNCmBgYHtyfQ0Kc2VudGltZW50cyAlPiUgDQogIGdyb3VwX2J5KGFubm90YXRvcikgJT4lIA0KICBzdW1tYXJpc2UobWVhbiA9IG1lYW4oYXMubnVtZXJpYyhhbm5vdGF0aW9uX3ZhbHVlKSwgbmEucm0gPSBUUlVFKSkNCmBgYA0KDQojIyBBc3NvY2lhdGlvbiBiZXR3ZWVuIGFubm90YXRvcnMNCg0KYGBge3J9DQphbm5vdGF0b3JzIDwtIHVuaXF1ZShzZW50aW1lbnRzJGFubm90YXRvcikNCnNlbnRpbWVudHMgJT4lIA0KICBzZWxlY3QoLWFubm90YXRpb25fdmFsdWVfc3RyKSAlPiUgDQogIHNwcmVhZChhbm5vdGF0b3IsIGFubm90YXRpb25fdmFsdWUpICU+JSANCiAgc2VsZWN0XyguZG90cyA9IGFzLmxpc3QoYW5ub3RhdG9ycykpICU+JQ0KICAjbXV0YXRlX2FsbChhcy5pbnRlZ2VyKSAlPiUgDQogIGNvcihtZXRob2QgPSAic3BlYXJtYW4iLA0KICAgICAgdXNlID0gInBhaXJ3aXNlLmNvbXBsZXRlLm9icyIpICU+JSANCiAga25pdHI6OmthYmxlKGRpZ2l0cyA9IDIpDQpgYGANCg0KYGBge3J9DQpwbG90X21hcmdpbmFsX3RhZ191c2VfYnlfYW5ub3RhdG9yKHNlbnRpbWVudHMsIHRhZ19vcmRlciA9ICJ2YWx1ZSIpDQpgYGANCg0KYGBge3J9DQojIyMgUTogSG93IHRvIGRlYWwgd2l0aCBtaXNzaW5nIHZhbHVlLCBhcyB3aWxsIGNvbW1vbmx5IG9jY3VyPyBUaGVzZSBzaG91bGQgb25seSBjb21lIHVwIHdoZW4gdGhlIHRvcGljIGlzIG5vdCBCb0UuDQpjcm9zc3Bsb3RfcGFpcndpc2Uoc2VudGltZW50cywgY3V0b2ZmID0gMCwgdGFnX29yZGVyID0gInZhbHVlIikNCmBgYA0KDQoNCiMgTGV2ZWwvY2hhbmdlIHRhZ3MNCg0KYGBge3J9DQpsZXZlbHNfb3JfY2hhbmdlcyA8LSANCiAgYW5ub3RhdGlvbnMgJT4lIA0KICBmaWx0ZXIoYW5ub3RhdGlvbl90eXBlID0gImxldmVsL2NoYW5nZSIpDQoNCnBsb3RfbWFyZ2luYWxfdGFnX3VzZV9ieV9hbm5vdGF0b3IobGV2ZWxzX29yX2NoYW5nZXMpDQpgYGANCg0KDQoNCiMgQVJDSElWRQ0KDQojIyBDb21wbGV0ZW5lc3MNCg0KQTogYWRhcHQgZm9yIGNoZWNraW5nIHdoYXRldmVyIG91ciBmaW5hbCB0YWdnaW5nIHJ1bGVzIGFyZQ0KDQpFYWNoIGFubm90YXRvciB3YXMgc3VwcG9zZWQgdG8gYXBwbHkgb25lIGFuZCBvbmx5IG9uZSBzZW50aW1lbnQgYW5ub3RhdGlvbiBwZXIgZG9jdW1lbnQuIExpc3QgYW55IHZpb2xhdGlvbnMuDQoNCmBgYHtyIG9uZV9hbm5vdGF0aW9uX3Blcl9hbm5vdGF0b3J9DQojIyMgQTogbW9kaWZ5IHRoaXMgc28gdGhhdCBvbmUgYW5kIG9ubHkgb25lIHRhZyB3aGVyZSB0aGVyZSBpcyBhbHNvIGEgdG9waWMgdGFnDQpzZW50aW1lbnRzICU+JSANCiAgY29tcGxldGUoZG9jX2lkLCBhbm5vdGF0b3IpICU+JSANCiAgZ3JvdXBfYnkoZG9jX2lkLCBhbm5vdGF0b3IpICU+JSANCiAgc3VtbWFyaXNlKG4gPSBzdW0oIWlzLm5hKGFubm90YXRpb25fdmFsdWUpKSkgJT4lIA0KICBmaWx0ZXIobiAhPSAxKSAlPiUgDQogIGFycmFuZ2UoYW5ub3RhdG9yLCBkb2NfaWQsIG4pDQpgYGANCg0KRnJvbSBoZXJlIG9uIHdlIHdvcmsgd2l0aCB3aGF0ZXZlciBzZW50aW1lbnQgYW5ub3RhdGlvbnMgYXJlIGF2YWlsYWJsZSAobm90IGFzc3VtaW5nIGEgYmFsYW5jZWQgcGFuZWwpLg0KDQojIyBDb21wbGV0ZW5lc3MgYW5kIG11bHRpcGxlIHRvcGljIHRhZ2dpbmcNCg0KRGlzdHJpYnV0aW9uIG9mIG51bWJlciBvZiB0b3BpY3MgcGVyIGFubm90YXRvci1kb2N1bWVudCBwYWlyIChpZiBhbnkpLg0KDQpgYGB7cn0NCnRvcGljc19wZXJfYW5ub3RhdG9yX2RvY3VtZW50IDwtIA0KICB0b3BpY3MgJT4lIA0KICBjb21wbGV0ZShkb2NfaWQsIGFubm90YXRvcikgJT4lIA0KICBncm91cF9ieShkb2NfaWQsIGFubm90YXRvcikgJT4lIA0KICBzdW1tYXJpc2Uobl9hbm5vdGF0aW9ucyA9IHN1bSghaXMubmEoYW5ub3RhdGlvbl92YWx1ZSkpKQ0KdG9waWNzX3Blcl9hbm5vdGF0b3JfZG9jdW1lbnQNCmBgYA0KDQpIb3cgb2Z0ZW4gaXMgZWFjaCBhbm5vdGF0b3IgYXBwbHlpbmcgYSBnaXZlbiBudW1iZXIgb2YgdG9waWMgdGFncyB0byB0aGUgc2FtZSAgZG9jdW1lbnQ/DQoNCmBgYHtyfQ0KbnRvcGljX3Blcl9hbm5vdGF0b3JfZG9jdW1lbnRfZGlzdHJpYnV0aW9uIDwtIA0KICB0b3BpY3NfcGVyX2Fubm90YXRvcl9kb2N1bWVudCAlPiUgDQogIGdyb3VwX2J5KGFubm90YXRvciwgbl9hbm5vdGF0aW9ucykgJT4lIA0KICBzdW1tYXJpc2UobiA9IG4oKSkNCm50b3BpY19wZXJfYW5ub3RhdG9yX2RvY3VtZW50X2Rpc3RyaWJ1dGlvbg0KYGBgDQoNCkFubm90YXRvcnMgd2hvIGhhdmUgZmFpbGVkIHRvIGFubm90YXRlIHNvbWUgZG9jdW1lbnRzLg0KDQpgYGB7cn0NCm50b3BpY19wZXJfYW5ub3RhdG9yX2RvY3VtZW50X2Rpc3RyaWJ1dGlvbiAlPiUgDQogIGZpbHRlcihuX2Fubm90YXRpb25zID09IDApICU+JSANCiAgc2VsZWN0KGFubm90YXRvcikNCmBgYA0KDQpBbm5vdGF0b3JzIHdobyBoYXZlIGFwcGxpZWQgbXVsdGlwbGUgdGFncyB0byBzb21lIGRvY3VtZW50cy4NCg0KYGBge3J9DQpudG9waWNfcGVyX2Fubm90YXRvcl9kb2N1bWVudF9kaXN0cmlidXRpb24gJT4lIA0KICBmaWx0ZXIobl9hbm5vdGF0aW9ucyA+IDEpICU+JSANCiAgZ3JvdXBfYnkoYW5ub3RhdG9yKSAlPiUgIA0KICBzdW1tYXJpc2UoKQ0KYGBgDQoNCkZyb20gaGVyZSBvbiB3ZSB3b3JrIHdpdGggd2hhdGV2ZXIgdG9waWMgYW5ub3RhdGlvbnMgYXJlIGF2YWlsYWJsZSAobm90IGFzc3VtaW5nIGEgYmFsYW5jZWQgcGFuZWwsIG9yIGEgdW5pcXVlIHRvcGljIHBlciBhbm5vdGF0b3ItZG9jdW1lbnQgcGFpcikuDQo=</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkNvbXBhcmUgYW5ub3RhdG9ycyINCm91dHB1dDogDQogIGh0bWxfbm90ZWJvb2s6IA0KICAgIG51bWJlcl9zZWN0aW9uczogeWVzDQotLS0NCg0KIyBTZXR1cA0KDQpgYGB7ciBzZXR1cH0NCmxpYnJhcnkod2ViYW5ub3IpDQpsaWJyYXJ5KHRpZHl2ZXJzZSkNCmxpYnJhcnkobWFncml0dHIpDQpsaWJyYXJ5KHN0cmluZ3IpDQpgYGANCg0KDQojIEltcG9ydCBhbm5vdGF0aW9ucw0KDQpJbXBvcnQgYW5ub3RhdGlvbnMgZnJvbSBwcm9qZWN0IGRpcmVjdG9yeSBleHBvcnRlZCBieSBXZWJBbm5vLg0KDQpgYGB7cn0NCnByb2plY3RfcGF0aCA8LSBmaWxlLnBhdGgoZ2V0d2QoKSwgIi4uL2RhdGEtcmF3IiwgImFubm90YXRpb25zIiwgIjIwMTctMDQtMjYiKQ0KYW5ub3RhdGlvbnMgPC0gDQogIGdldF9hbm5vdGF0aW9ucy5XZWJBbm5vX3Byb2plY3QocHJvamVjdF9wYXRoKSAlPiUgDQogICMjIyBBOiBjb3VsZCBhYnN0cmFjdCB0aGlzIHN0ZXAgaW50byBhIGZ1bmN0aW9uIHRvIHJlcGxhY2UgYW5ub3RhdGlvbiBmaWVsZCBuYW1lcywgYW5kIG1ha2UgdGhlIHJlcGxhY2VtZW50cyB0byBiZSBwYXJhbWV0ZXJzIHRvIHRoZSBwcm9ncmFtLCByYXRoZXIgdGhhbiBoYXJkd2lyZWQNCiAgbXV0YXRlKGFubm90YXRpb25fdHlwZSA9IHN0cmluZ3I6OnN0cl9yZXBsYWNlKGFubm90YXRpb25fdHlwZSwgIlNjb3JlIiwgInNlbnRpbWVudCIpLA0KICAgICAgICAgYW5ub3RhdGlvbl90eXBlID0gc3RyaW5ncjo6c3RyX3JlcGxhY2UoYW5ub3RhdGlvbl90eXBlLCAiQ29udGV4dCIsICJ0b3BpYyIpLA0KICAgICAgICAgYW5ub3RhdGlvbl90eXBlID0gc3RyaW5ncjo6c3RyX3JlcGxhY2UoYW5ub3RhdGlvbl90eXBlLCAiaHlwb3RoZXRpY2FsIiwgIm5hdHVyZSIpLA0KICAgICAgICAgYW5ub3RhdGlvbl90eXBlID0gc3RyaW5ncjo6c3RyX3JlcGxhY2UoYW5ub3RhdGlvbl90eXBlLCAiZExldmVsY2hhbmdlIiwgImxldmVsX2NoYW5nZSIpKSAlPiUgDQogIHNlbGVjdChkb2NfaWQsIGFubm90YXRvciwgaWRfYW5ub3RhdGlvbiwgYW5ub3RhdGlvbl90eXBlLCBhbm5vdGF0aW9uX3ZhbHVlLCBldmVyeXRoaW5nKCkpDQphbm5vdGF0aW9ucw0KYGBgDQoNCkFwcGx5IGFueSBwcm9qZWN0LXNwZWNpZmljIGZpeC11cHMgaGVyZS4NCg0KYGBge3J9DQojIE9sZCB0YWcgbmFtZXMgdGhhdCBnb3QgY2hhbmdlcyBwYXJ0d2F5IHRocm91Z2ggdGFnZ2luZw0KYW5ub3RhdGlvbnMgJTw+JSANCiAgbXV0YXRlKGFubm90YXRpb25fdmFsdWUgPSANCiAgICAgICAgICAgaWZlbHNlKGFubm90YXRpb25fdHlwZSA9PSAidG9waWMiICYgYW5ub3RhdGlvbl92YWx1ZSA9PSAiUmVtaXQgKG1vbmV0YXJ5IHBvbGljeSkiLCANCiAgICAgICAgICAgICAgICAgICJPYmplY3RpdmUgKG1vbmV0YXJ5IHBvbGljeSkiLCBhbm5vdGF0aW9uX3ZhbHVlKSkNCg0KIyBTaG9ydGVyIHRvcGljIHRhZ25hbWVzIHRvIGZhY2lsaXRhdGUgZWFzZSBvZiByZWFkaW5nIHBsb3RzIChub3RlIHRoZSB0YWdzIHRoZW4NCiMgd29uJ3QgYWxpZ24gd2l0aCBhbnkgdGFnc2V0cyBhdXRvbWF0aWNhbGx5IGV4dHJhY3RlZCBmcm9tIHRoZSBXZWJBbm5vIHByb2plY3QgDQojIGZpbGVzLCBpZiBJIGltcGxlbWVudCBzdWNoIGF1dG9tYXRpYyBleHRyYWN0aW9uIGluIGZ1dHVyZSkNCmFubm90YXRpb25zICU8PiUgDQogIG11dGF0ZShhbm5vdGF0aW9uX3ZhbHVlID0gDQogICAgICAgICAgIGlmZWxzZShhbm5vdGF0aW9uX3R5cGUgPT0gInRvcGljIiwNCiAgICAgICAgICAgICAgICAgIHJlY29kZShhbm5vdGF0aW9uX3ZhbHVlLA0KICAgICAgICAgICAgICAgICAgICAgICAgIGBGaW5hbmNpYWwgc3RhYmlsaXR5IC8gcG9saWN5IC8gcmVndWxhdGlvbiAvIHN1cGVydmlzaW9uYCA9ICJGaW5hbmNpYWwiLA0KICAgICAgICAgICAgICAgICAgICAgICAgIGBDb21wZXRlbmNlIC8gaW1wbGVtZW50YXRpb24gLyBhcHByb2FjaCAvIHN0YWZmYCA9ICJJbXBsZW1lbnRhdGlvbiIsDQogICAgICAgICAgICAgICAgICAgICAgICAgYEluc3RydW1lbnRzIChtb25ldGFyeSBwb2xpY3kpYCA9ICJJbnN0cnVtZW50cyAoTVApIiwNCiAgICAgICAgICAgICAgICAgICAgICAgICBgT2JqZWN0aXZlIChtb25ldGFyeSBwb2xpY3kpYCA9ICJPYmplY3RpdmVzIChNUCkiKSwNCiAgICAgICAgICAgICAgICAgIGFubm90YXRpb25fdmFsdWUpKQ0KDQoNCmBgYA0KDQoNCkltcHV0ZSB0YWdzIHRvIGRvY3VtZW50cyB3aXRoIHRhZyBmaWVsZCBsZWZ0IGJsYW5rLCB3aGVyZSBibGFuayBpbXBsaWVzIGEgZGVmYXVsdCB0YWcgdW5kZXIgdGhlIGFubm90YXRpb24gcG9saWN5Lg0KDQpgYGB7cn0NCiMjIyBBOiBjb25zaWRlciB3cmFwcGluZyB0aGUgZm9sbG93aW5nIGltcHV0YXRpb24gaW50byB0aGUgaW1wb3J0IGZ1bmN0aW9uIC0tIA0KIyMjIGNvdWxkIGRvIGF0IGRvY3VtZW50LWFubm90YXRvciBsZXZlbCB1c2luZyB0eXBlc3lzdGVtLnhtaSwgb3IgYXQgcHJvamVjdCANCiMjIyBsZXZlbCB1c2luZyBwcm9qZWN0IHN0cnVjdHVyZSBmaWxlcyAodGhlIGpzb24/KSBvciBhIHVzZXItcHJvdmlkZWQgdGFnbGlzdA0KIyMjICg/KS4NCg0KIyBJbiBjYXNlIHRoZXJlIGFyZSBkb2N1bWVudHMgd2hpY2ggKm5vKiBhbm5vdGF0b3IgaGFzIGV4cGxpY2l0bHkgdGFnZ2VkLCB3ZSBuZWVkIGFuIGV4dGVybmFsIGxpc3Qgb2YgZG9jdW1lbnRzIHNob3duIHRvIGFubm90YXRvcnMuDQoNCiMgR2V0IGNvbXBsZXRlIGxpc3Qgb2YgZG9jX2lkcywgYW5ub3RhdG9ycywgYW5kIGFubm90YXRpb24gdHlwZXMgKHNvbWUgbWF5IG5ldmVyDQojIGFwcGVhciBpbiB0aGUgYW5ub3RhdGlvbnMgZG9jKS4gTk9URTogd29ya2Fyb3VuZCB0byB1c2UgdGhlIGdldHRlciBmdW5jdGlvbiwNCiMgcmF0aGVyIHRoYW4gdGFrZSBkaXJlY3QgZnJvbSBhdHRyaWJ1dGVzIG9mIGBhbm5vdGF0aW9uc2Agb2JqZWN0LCBiZWNhdXNlIHRoaXMgDQojIGluZm9ybWF0aW9uIGJlaW5nIGRlbGV0ZWQgZnJvbSBgYW5ub3RhdGlvbnNgIG9iamVjdCBieSBkcGx5ciBnZW5lcmljcw0KZG9jX2lkcyA8LSBnZXRfZG9jX2lkc19mcm9tX3Byb2plY3RfcGF0aChwcm9qZWN0X3BhdGgpDQojIEltcHV0ZSBtaXNzaW5nIHRhZ3MgdG8gYW5ub3RhdG9ycyB3aG8gZmFpbGVkIHRvIGFwcGx5IGFueSB0YWdzIGFuZCBzbyBkb24ndA0KIyBhcHBlYXIgaW4gdGhlIGV4cGxpY2l0IGltcG9ydGVkIHRhZ3NldC4gTm90IHlldCBpbXBsZW1lbnRlZC4gV2UgaW1wbGljaXRseQ0KIyBhc3N1bWUgdGhhdCBhbGwgYW5ub3RhdG9ycyBoYXZlIGFwcGxpZWQgYXQgbGVhc3Qgb25lIHRhZyB0byBhdCBsZWFzdCBvbmUNCiMgZG9jdW1lbnQuLi4gb3IgZWxzZSB3ZSBpZ25vcmUgdGhlbS4NCmFubm90YXRvcnMgPC0gZ2V0X2Fubm90YXRvcnMoYW5ub3RhdGlvbnMpICMgTk9URTogd2lsbCBtaXNzIGFueSB0b3RhbGx5IHNpbGVudCBhbm5vdGF0b3JzDQphbm5vdGF0aW9uX3R5cGVzIDwtIGdldF9hbm5vdGF0aW9uX3R5cGVzKGFubm90YXRpb25zKSAjIE5PVEU6IHdpbGwgbWlzcyBhbnkgdG90YWxseSB1bnVzZWQgYW5ubm90YXRpb24gdHlwZXMNCg0KIyBDb21wbGV0ZSB0aGUgYW5ub3RhdGlvbnMgYnkgYWRkaW5nIG1pc3NpbmcgZG9jdW1lbnQtYW5ub3RhdG9yLWFubm90aW9uIHR5cGUgDQojIHRyaXBsZXMuIFZhbHVlcyBhcmUgZmlsbGVkIHdpdGggTkEsIHBlbmRpbmcgaW1wdXRhdGlvbiBvZiBpbXBsaWNpdCB2YWx1ZXMgZm9yIA0KIyBubyB0YWcgLyBibGFuayB0YWdzIA0KIyMgQTogQ29uc2lkZXIgd3JhcHBpbmcgaW50byBhIGZ1bmN0aW9uIChlLmcuIGltcHV0ZV9ibGFua190YWdzKSBvbmNlIG91ciB0YWdnaW5nIHBvbGljeSBpcyBzdGFuZGFyZGlzZWQNCmFubm90YXRpb25zICU8PiUgDQogIGNvbXBsZXRlKGRvY19pZCA9IGRvY19pZHMsIA0KICAgICAgICAgICBhbm5vdGF0b3IgPSBhbm5vdGF0b3JzLCANCiAgICAgICAgICAgYW5ub3RhdGlvbl90eXBlID0gYW5ub3RhdGlvbl90eXBlcykNCg0KIyBUYWdnaW5nIGluc3RydWN0aW9ucyB3ZXJlIHRvIG5vdCBhcHBseSB0YWdzIGJleW9uZCB0aGUgdG9waWMgdGFnIGlmIHRoYXQgd2FzIHRoZSBkZWZhdWx0IGJsYW5rIChpbXBsaWNpdGx5ICJOb3QgQm9FIikgdGFnLiBUaGVyZWZvcmUgdGFnIGRlZmF1bHRzIGZvciBvdGhlciB0YWdzIHNob3VsZCBvbmx5IGJlIGFwcGxpZWQgdG8gdGhlIHN1YnNldCB3aXRoIGV4cGxpY2l0IEJvRSB0b3BpYyB0YWdzLiBXZSB0aGVyZWZvcmUgc3BsaXQgdGhlIGRhdGEuZnJhbWUgdG8gaW1wbGVtZW50IHRoaXMgc3BsaXQgcG9saWN5LCBhbmQgdGhlbiByZWNvbWJpbmVkLiANCmFubm90YXRpb25zICU8PiUgDQogIGdyb3VwX2J5KGRvY19pZCwgYW5ub3RhdG9yKSAlPiUgDQogIG11dGF0ZShCb0VfdG9waWMgPSANCiAgICAgICAgICAgc3VtKGFubm90YXRpb25fdHlwZSA9PSAidG9waWMiICYgIWlzLm5hKGFubm90YXRpb25fdmFsdWUpKSA+IDApICU+JSANCiAgdW5ncm91cCgpDQoNCiMjIyBXQVJOSU5HOiBIYXJkd2lyZWQgZmllbGQgbmFtZXMgYW5kIGRlZmF1bHQgdmFsdWVzDQpkZWZhdWx0c19saXN0X0JvRSA8LSAgIA0KICBsaXN0KHRvcGljID0gIk5vdCBCb0UiLA0KICAgICAgIG5hdHVyZSA9IE5BLCAjIyMgUTogRG9lcyB0aGUgYmxhbmsgdGFnIChjb21wbGVtZW50IG9mIHRoZSBuYW1lZCB0YWdzKSBoYXZlIGEgdW5pcXVlIGludGVycHJldGF0aW9uIGZvciB0aGlzIGZpZWxkPw0KICAgICAgIHNlbnRpbWVudCA9ICJOZXV0cmFsIiwNCiAgICAgICBsZXZlbF9jaGFuZ2UgPSBOQSkgIyMjIFE6IElzIHRoaXMgZ29pbmcgdG8gYmUgZ2l2ZW4gYSAoYmxhbmspIGRlZmF1bHQ/IA0KDQphbm5vdGF0aW9uc19Cb0UgPC0gDQogIGFubm90YXRpb25zICU+JSANCiAgZmlsdGVyKEJvRV90b3BpYykgJT4lIA0KICBzcHJlYWQoYW5ub3RhdGlvbl90eXBlLCBhbm5vdGF0aW9uX3ZhbHVlKSAlPiUgDQogIGZpbHRlcighaXMubmEoaWRfYW5ub3RhdGlvbikpICU+JSAjIGRyb3Agc3B1cmlvdXMgcm93cyB0aGF0IHNwcmVhZCBoYXMgaW50cm9kdWNlZA0KICByZXBsYWNlX25hKGRlZmF1bHRzX2xpc3RfQm9FKSAlPiUgDQogIGdhdGhlcl8oImFubm90YXRpb25fdHlwZSIsICJhbm5vdGF0aW9uX3ZhbHVlIiwgYW5ub3RhdGlvbl90eXBlcykNCg0KYW5ub3RhdGlvbnNfbm9uX0JvRSA8LSANCiAgYW5ub3RhdGlvbnMgJT4lIA0KICBmaWx0ZXIoIUJvRV90b3BpYykgJT4lIA0KICBtdXRhdGUoYW5ub3RhdGlvbl92YWx1ZSA9IGlmZWxzZShhbm5vdGF0aW9uX3R5cGUgPT0gInRvcGljIiAmIGlzLm5hKGFubm90YXRpb25fdmFsdWUpLCBkZWZhdWx0c19saXN0X0JvRSR0b3BpYywgYW5ub3RhdGlvbl92YWx1ZSkpDQoNCnN0b3BpZm5vdCggIyBjaGVjayB0aGF0IHdoZXJlIHRvcGljIGlzIGJsYW5rLCBubyBvdGhlciB0YWdzIGhhdmUgYmVlbiBhcHBsaWVkDQogIGFubm90YXRpb25zX25vbl9Cb0UgJT4lIA0KICBmaWx0ZXIoYW5ub3RhdGlvbl90eXBlICE9ICJ0b3BpYyIpICU+JSANCiAgZmlsdGVyKCFpcy5uYShhbm5vdGF0aW9uX3ZhbHVlKSkgJT4lIA0KICBucm93KCkgPT0gMCkNCg0KYW5ub3RhdGlvbnMgPC0gDQogIGJpbmRfcm93cyhhbm5vdGF0aW9uc19Cb0UsIGFubm90YXRpb25zX25vbl9Cb0UpICU+JSANCiAgYXJyYW5nZShkb2NfaWQsIGFubm90YXRvciwgaWRfYW5ub3RhdGlvbiwgYW5ub3RhdGlvbl90eXBlLCBhbm5vdGF0aW9uX3ZhbHVlKQ0KICANCmBgYA0KDQoNCiMgVG9waWNzKHMpDQoNCkV4dHJhY3QgdG9waWNzIHRhZ3MuDQoNCmBgYHtyfQ0KIyMjIEE6IHNlZSBpZiBjYW4gbWFwIG92ZXIgZGlmZmVyZW50IGFubm90YXRpb25fdHlwZXMsIHJhdGhlciB0aGFuIHJlcGVhdGluZyB0aGlzIHBhdHRlcm4gZm9yIGVhY2gNCnRvcGljcyA8LSANCiAgYW5ub3RhdGlvbnMgJT4lIA0KICBmaWx0ZXIoYW5ub3RhdGlvbl90eXBlID09ICJ0b3BpYyIpICMgJT4lIA0KICAjIHNlbGVjdChkb2NfaWQsIGlkX2Fubm90YXRpb24sIGFubm90YXRvciwgYW5ub3RhdGlvbl92YWx1ZSkNCmBgYA0KDQoNCmBgYHtyfQ0KdG9waWNzICU+JQ0KICBtdXRhdGUoYW5ub3RhdGlvbl92YWx1ZSA9IGlmZWxzZShhbm5vdGF0aW9uX3ZhbHVlICE9ICJOb3QgQm9FIiwgIkJvRSIsIGFubm90YXRpb25fdmFsdWUpKSAlPiUgDQogIGdncGxvdChhZXMoeCA9IGFubm90YXRvcikpICsgDQogIGdlb21fYmFyKGFlcyhmaWxsID0gYW5ub3RhdGlvbl92YWx1ZSkpICsgDQogIGNvb3JkX2ZsaXAoKSArIA0KICBzY2FsZV94X2Rpc2NyZXRlKG5hbWUgPSBOVUxMKQ0KYGBgDQoNCg0KYGBge3J9DQp0b3BpY3MgJT4lIA0KICBmaWx0ZXIoYW5ub3RhdGlvbl92YWx1ZSAhPSAiTm90IEJvRSIpICU+JSANCiAgcGxvdF9tYXJnaW5hbF90YWdfZnJlcXVlbmN5KHNvcnQgPSAiZnJlcXVlbmN5IikNCmBgYA0KDQpDZW5zb3IgY2VsbHMgd2l0aCB2ZXJ5IGZldyBjby1vY2N1cnJlbmNlcywgdG8gbWFrZSBpdCB2aXN1YWxseSBlYXNpZXIgdG8gaWRlbnRpZnkgdGhlIG1haW4gZmVhdHVyZXMgb2YgZGlzYWdyZWVtZW50Lg0KDQpgYGB7cn0NCnBsb3RfY29pbmNpZGVuY2VzX2Fubm90YXRvcnNfcGFpcndpc2UodG9waWNzLCBjdXRvZmYgPSAwLCBzb3J0ID0gImZyZXF1ZW5jeSIpDQpgYGANCg0KIyAiTmF0dXJlIiB0YWdzDQoNCmBgYHtyfQ0KbmF0dXJlcyA8LSANCiAgYW5ub3RhdGlvbnMgJT4lIA0KICBmaWx0ZXIoQm9FX3RvcGljKSAlPiUgDQogIGZpbHRlcihhbm5vdGF0aW9uX3R5cGUgPT0gIm5hdHVyZSIpDQpgYGANCg0KYGBge3J9DQpwbG90X21hcmdpbmFsX3RhZ19mcmVxdWVuY3kobmF0dXJlcywgc29ydCA9ICJmcmVxdWVuY3kiKQ0KYGBgDQoNCmBgYHtyfQ0KY3Jvc3NwbG90X3BhaXJ3aXNlKG5hdHVyZXMsIGN1dG9mZiA9IDAsIHNvcnQgPSAiZnJlcXVlbmN5IikNCmBgYA0KDQoNCiMgU2VudGltZW50DQoNCkV4dHJhY3Qgc2VudGltZW50IHRhZ3MgaW50byBhIGRhdGFmcmFtZS4NCg0KYGBge3J9DQpzZW50aW1lbnRzIDwtIA0KICBhbm5vdGF0aW9ucyAlPiUNCiAgZmlsdGVyKEJvRV90b3BpYykgJT4lIA0KICBmaWx0ZXIoYW5ub3RhdGlvbl90eXBlID09ICJzZW50aW1lbnQiKSAlPiUgDQogIHNlbGVjdChkb2NfaWQsIGlkX2Fubm90YXRpb24sIGFubm90YXRvciwgYW5ub3RhdGlvbl92YWx1ZSkNCmBgYA0KDQpNYXAgc2VudGltZW50cyBzdHJpbmdzIHRvIG51bWJlcnMuDQoNCmBgYHtyfQ0KIyBXQVJOSU5HISBIYXJkd2lyZWQgc3RyaW5ncw0Kc2VudGltZW50X21hcF9jaHJfdG9fbnVtZXJpY19jb3JyZWN0IDwtIA0KICB0aWJibGU6OnRyaWJibGUoDQogICAgfmFubm90YXRpb25fdmFsdWUsIH5zY29yZSwNCiAgICAiMS4gU3Ryb25nbHkgTmVnYXRpdmUiLCAtM0wsDQogICAgIjIuIE5lZ2F0aXZlIiAgICAgICAgICwgLTJMLA0KICAgICIzLiBXZWFrbHkgTmVnYXRpdmUiICAsIC0xTCwNCiAgICAiNC4gTmV1dHJhbCIgICAgICAgICAgLCAgMEwsDQogICAgIjUuIFdlYWtseSBQb3NpdGl2ZSIgICwgKzFMLA0KICAgICI2LiBQb3NpdGl2ZSIgICAgICAgICAsICsyTCwNCiAgICAiNy4gU3Ryb25nbHkgUG9zaXRpdmUiLCArM0wsDQogICAgIkNvdWxkbid0IHNjb3JlIiAgICAgICwgTkFfaW50ZWdlcl8NCiAgKQ0KDQpzZW50aW1lbnRfbWFwX2Nocl90b19udW1lcmljXzIwMTcwNDI2IDwtIA0KICB0aWJibGU6OnRyaWJibGUoDQogICAgfmFubm90YXRpb25fdmFsdWUsIH5zY29yZSwNCiAgICAiMS4gU3Ryb25nbHkgTmVnYXRpdmUiLCAtM0wsDQogICAgIjIuIE5lZ2F0aXZlIiAgICAgICAgICwgLTJMLA0KICAgICIzLiBXZWFrbHkgTmVnYXRpdmUiICAsIC0xTCwNCiAgICAiNC4gV2Vha2x5IFBvc2l0aXZlIiAgLCArMUwsDQogICAgIjUuIFBvc2l0aXZlIiAgICAgICAgICwgKzJMLA0KICAgICI2LiBTdHJvbmdseSBQb3NpdGl2ZSIsICszTCwNCiAgICAiNy4gQ291bGRuJ3Qgc2NvcmUiICAgLCBOQV9pbnRlZ2VyXywNCiAgICAiTmV1dHJhbCIgICAgICAgICAgICAgLCAwDQogICkNCg0KDQojIE5vdGUgdGhpcyB3aWxsIGx1bXAgdW5zY29yZWQgZG9jdW1lbnRzIGluIHdpdGggZXhwbGljaXQgIkNvdWxkbid0IHNjb3JlIiB0YWdzLCBzbyB0byBjaGVjayBmb3IgZG9jdW1lbnRzIGxhY2tpbmcgYSBzZW50aW1lbnQgdGFnLCBJIHdvdWxkIG5lZWQgdG8gZG8gc28gd2l0aCBOQV9jaGFyYWN0ZXJfIGVhcmx5IG9uDQpzZW50aW1lbnRzICU8PiUNCiAgbGVmdF9qb2luKHNlbnRpbWVudF9tYXBfY2hyX3RvX251bWVyaWNfMjAxNzA0MjYsIGJ5ID0gImFubm90YXRpb25fdmFsdWUiKSAlPiUgDQogIHJlbmFtZShhbm5vdGF0aW9uX3ZhbHVlX3N0ciA9IGFubm90YXRpb25fdmFsdWUsDQogICAgICAgICBhbm5vdGF0aW9uX3ZhbHVlID0gc2NvcmUpICMga2VlcCB2YXJuYW1lIGdlbmVyaWMgdG8gZWFzZSByZXVzZSBvZiBvdGhlciBjb2RlICh3b3VsZCBiZWNvbWUgdW5uZWNlc3NhcnkgaWYgcGFzc2luZyBhcyBmdW5jdGlvbiBhcmd1bWVudCkNCmBgYA0KDQoNCiMjIE1lYW4gYnkgYW5ub3RhdG9yDQoNClRyZWF0aW5nIHNlbnRpbWVudCBzY29yZXMgYXMgb24gYW4gaW50ZXJ2YWwgc2NhbGUgZnJvbSAtMyAoc3Ryb25nbHkgbmVnYXRpdmUpIHRvICszIChzdHJvbmdseSBwb3NpdGl2ZSkuDQoNCmBgYHtyfQ0Kc2VudGltZW50cyAlPiUgDQogIGdyb3VwX2J5KGFubm90YXRvcikgJT4lIA0KICBzdW1tYXJpc2UobWVhbiA9IG1lYW4oYXMubnVtZXJpYyhhbm5vdGF0aW9uX3ZhbHVlKSwgbmEucm0gPSBUUlVFKSkNCmBgYA0KDQojIyBBc3NvY2lhdGlvbiBiZXR3ZWVuIGFubm90YXRvcnMNCg0KYGBge3J9DQphbm5vdGF0b3JzIDwtIHVuaXF1ZShzZW50aW1lbnRzJGFubm90YXRvcikNCnNlbnRpbWVudHMgJT4lIA0KICBzZWxlY3QoLWFubm90YXRpb25fdmFsdWVfc3RyKSAlPiUgDQogIHNwcmVhZChhbm5vdGF0b3IsIGFubm90YXRpb25fdmFsdWUpICU+JSANCiAgc2VsZWN0XyguZG90cyA9IGFzLmxpc3QoYW5ub3RhdG9ycykpICU+JQ0KICAjbXV0YXRlX2FsbChhcy5pbnRlZ2VyKSAlPiUgDQogIGNvcihtZXRob2QgPSAic3BlYXJtYW4iLA0KICAgICAgdXNlID0gInBhaXJ3aXNlLmNvbXBsZXRlLm9icyIpICU+JSANCiAga25pdHI6OmthYmxlKGRpZ2l0cyA9IDIpDQpgYGANCg0KYGBge3J9DQpwbG90X21hcmdpbmFsX3RhZ19mcmVxdWVuY3koc2VudGltZW50cywgc29ydCA9ICJ2YWx1ZSIpDQpgYGANCg0KYGBge3J9DQojIyMgUTogSG93IHRvIGRlYWwgd2l0aCBtaXNzaW5nIHZhbHVlLCBhcyB3aWxsIGNvbW1vbmx5IG9jY3VyPyBUaGVzZSBzaG91bGQgb25seSBjb21lIHVwIHdoZW4gdGhlIHRvcGljIGlzIG5vdCBCb0UuDQpjcm9zc3Bsb3RfcGFpcndpc2Uoc2VudGltZW50cywgY3V0b2ZmID0gMCwgc29ydCA9ICJ2YWx1ZSIpDQpgYGANCg0KDQojIyBMZXZlbC9jaGFuZ2UgdGFncw0KDQpgYGB7cn0NCmxldmVsc19vcl9jaGFuZ2VzIDwtIA0KICBhbm5vdGF0aW9ucyAlPiUNCiAgZmlsdGVyKEJvRV90b3BpYykgJT4lIA0KICBmaWx0ZXIoYW5ub3RhdGlvbl90eXBlID09ICJsZXZlbC9jaGFuZ2UiKQ0KDQpwbG90X21hcmdpbmFsX3RhZ19mcmVxdWVuY3kobGV2ZWxzX29yX2NoYW5nZXMpDQpgYGANCg0KDQojIERvY3VtZW50LWJ5LWRvY3VtZW50IHZpZXcNCg0KYGBge3J9DQp0b3BpY191bmlxdWVfYW5ub3RhdG9yIDwtIA0KICB0b3BpY3MgJT4lIA0KICBzZWxlY3QoZG9jX2lkLCBhbm5vdGF0b3IsIGFubm90YXRpb25fdmFsdWUpICU+JSANCiAgZ3JvdXBfYnkoZG9jX2lkLCBhbm5vdGF0b3IpICU+JSANCiAgbXV0YXRlKGRvY3VtZW50X2Fubm90YXRvcl9zZXEgPSByb3dfbnVtYmVyKCksDQogICAgICAgICBhbm5vdGF0b3JfdW5pcXVlID0gaWZlbHNlKGRvY3VtZW50X2Fubm90YXRvcl9zZXEgPT0gMSwgYW5ub3RhdG9yLCBwYXN0ZTAoYW5ub3RhdG9yLCAiXzIiKSkpICU+JSANCiAgdW5ncm91cCgpICU+JSANCiAgc2VsZWN0KC1hbm5vdGF0b3IsIC1kb2N1bWVudF9hbm5vdGF0b3Jfc2VxKSAlPiUgDQogIHNwcmVhZChhbm5vdGF0b3JfdW5pcXVlLCBhbm5vdGF0aW9uX3ZhbHVlKQ0KdG9waWNfdW5pcXVlX2Fubm90YXRvcg0KYGBgDQoNCg0KDQojIyBBZ3JlZW1lbnQgLyBkaXNhZ3JlZW1lbnQgYnkgZG9jdW1lbnQNCg0KYGBge3J9DQp0b3BpY3NfcGVyX2RvYyA8LSANCiAgdG9waWNzICU+JQ0KICBncm91cF9ieShkb2NfaWQpICU+JSANCiAgc3VtbWFyaXNlKG5fZGlzdGluY3RfdG9waWMgPSBuX2Rpc3RpbmN0KGFubm90YXRpb25fdmFsdWUpKQ0KYGBgDQoNCkNvbXBsZXRlIGFncmVlbWVudC4NCg0KYGBge3J9DQp0b3BpY3NfcGVyX2RvYyAlPiUgDQogIGZpbHRlcihuX2Rpc3RpbmN0X3RvcGljID09IDEpDQpgYGANCg0KRG9jdW1lbnRzIHdpdGggc29tZSBkaXNhZ3JlZW1lbnQuDQoNCmBgYHtyfQ0KdG9waWNfdW5pcXVlX2Fubm90YXRvciAlPiUgDQogIGxlZnRfam9pbih0b3BpY3NfcGVyX2RvYywgImRvY19pZCIpICU+JSANCiAgZmlsdGVyKG5fZGlzdGluY3RfdG9waWMgPiAxKQ0KDQpgYGANCg0KDQoNCiMgQVJDSElWRQ0KDQojIyBDb21wbGV0ZW5lc3MNCg0KQTogYWRhcHQgZm9yIGNoZWNraW5nIHdoYXRldmVyIG91ciBmaW5hbCB0YWdnaW5nIHJ1bGVzIGFyZQ0KDQpFYWNoIGFubm90YXRvciB3YXMgc3VwcG9zZWQgdG8gYXBwbHkgb25lIGFuZCBvbmx5IG9uZSBzZW50aW1lbnQgYW5ub3RhdGlvbiBwZXIgZG9jdW1lbnQuIExpc3QgYW55IHZpb2xhdGlvbnMuDQoNCmBgYHtyIG9uZV9hbm5vdGF0aW9uX3Blcl9hbm5vdGF0b3J9DQojIyMgQTogbW9kaWZ5IHRoaXMgc28gdGhhdCBvbmUgYW5kIG9ubHkgb25lIHRhZyB3aGVyZSB0aGVyZSBpcyBhbHNvIGEgdG9waWMgdGFnDQpzZW50aW1lbnRzICU+JSANCiAgY29tcGxldGUoZG9jX2lkLCBhbm5vdGF0b3IpICU+JSANCiAgZ3JvdXBfYnkoZG9jX2lkLCBhbm5vdGF0b3IpICU+JSANCiAgc3VtbWFyaXNlKG4gPSBzdW0oIWlzLm5hKGFubm90YXRpb25fdmFsdWUpKSkgJT4lIA0KICBmaWx0ZXIobiAhPSAxKSAlPiUgDQogIGFycmFuZ2UoYW5ub3RhdG9yLCBkb2NfaWQsIG4pDQpgYGANCg0KRnJvbSBoZXJlIG9uIHdlIHdvcmsgd2l0aCB3aGF0ZXZlciBzZW50aW1lbnQgYW5ub3RhdGlvbnMgYXJlIGF2YWlsYWJsZSAobm90IGFzc3VtaW5nIGEgYmFsYW5jZWQgcGFuZWwpLg0KDQojIyBDb21wbGV0ZW5lc3MgYW5kIG11bHRpcGxlIHRvcGljIHRhZ2dpbmcNCg0KRGlzdHJpYnV0aW9uIG9mIG51bWJlciBvZiB0b3BpY3MgcGVyIGFubm90YXRvci1kb2N1bWVudCBwYWlyIChpZiBhbnkpLg0KDQpgYGB7cn0NCnRvcGljc19wZXJfYW5ub3RhdG9yX2RvY3VtZW50IDwtIA0KICB0b3BpY3MgJT4lIA0KICBjb21wbGV0ZShkb2NfaWQsIGFubm90YXRvcikgJT4lIA0KICBncm91cF9ieShkb2NfaWQsIGFubm90YXRvcikgJT4lIA0KICBzdW1tYXJpc2Uobl9hbm5vdGF0aW9ucyA9IHN1bSghaXMubmEoYW5ub3RhdGlvbl92YWx1ZSkpKQ0KdG9waWNzX3Blcl9hbm5vdGF0b3JfZG9jdW1lbnQNCmBgYA0KDQpIb3cgb2Z0ZW4gaXMgZWFjaCBhbm5vdGF0b3IgYXBwbHlpbmcgYSBnaXZlbiBudW1iZXIgb2YgdG9waWMgdGFncyB0byB0aGUgc2FtZSAgZG9jdW1lbnQ/DQoNCmBgYHtyfQ0KbnRvcGljX3Blcl9hbm5vdGF0b3JfZG9jdW1lbnRfZGlzdHJpYnV0aW9uIDwtIA0KICB0b3BpY3NfcGVyX2Fubm90YXRvcl9kb2N1bWVudCAlPiUgDQogIGdyb3VwX2J5KGFubm90YXRvciwgbl9hbm5vdGF0aW9ucykgJT4lIA0KICBzdW1tYXJpc2UobiA9IG4oKSkNCm50b3BpY19wZXJfYW5ub3RhdG9yX2RvY3VtZW50X2Rpc3RyaWJ1dGlvbg0KYGBgDQoNCkFubm90YXRvcnMgd2hvIGhhdmUgZmFpbGVkIHRvIGFubm90YXRlIHNvbWUgZG9jdW1lbnRzLg0KDQpgYGB7cn0NCm50b3BpY19wZXJfYW5ub3RhdG9yX2RvY3VtZW50X2Rpc3RyaWJ1dGlvbiAlPiUgDQogIGZpbHRlcihuX2Fubm90YXRpb25zID09IDApICU+JSANCiAgc2VsZWN0KGFubm90YXRvcikNCmBgYA0KDQpBbm5vdGF0b3JzIHdobyBoYXZlIGFwcGxpZWQgbXVsdGlwbGUgdGFncyB0byBzb21lIGRvY3VtZW50cy4NCg0KYGBge3J9DQpudG9waWNfcGVyX2Fubm90YXRvcl9kb2N1bWVudF9kaXN0cmlidXRpb24gJT4lIA0KICBmaWx0ZXIobl9hbm5vdGF0aW9ucyA+IDEpICU+JSANCiAgZ3JvdXBfYnkoYW5ub3RhdG9yKSAlPiUgIA0KICBzdW1tYXJpc2UoKQ0KYGBgDQoNCkZyb20gaGVyZSBvbiB3ZSB3b3JrIHdpdGggd2hhdGV2ZXIgdG9waWMgYW5ub3RhdGlvbnMgYXJlIGF2YWlsYWJsZSAobm90IGFzc3VtaW5nIGEgYmFsYW5jZWQgcGFuZWwsIG9yIGEgdW5pcXVlIHRvcGljIHBlciBhbm5vdGF0b3ItZG9jdW1lbnQgcGFpcikuDQo=</div>
 
 
 

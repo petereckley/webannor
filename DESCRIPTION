@@ -1,7 +1,7 @@
 Package: webannor
 Type: Package
 Title: Import text annotation files exported by WebAnno
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: person("Peter", "Eckley", email = "peter.eckley@gmail.com", 
     role = c("aut", "cre"))
 Description: Import text annotation files exported by WebAnno.
@@ -10,7 +10,12 @@ Depends:
 Imports:
     purrr (>= 0.2.2),
     XML (>= 3.98),
-    widyr (>= 0.0.0.9000)
+    widyr (>= 0.0.0.9000),
+    magrittr (>= 1.5),
+    dplyr (>= 0.5.0),
+    ggplot2 (>= 2.2.1),
+    tools (>= 3.4.0),
+    gtools (>= 3.5.0)
 License: GPL-3 + file LICENCE
 Encoding: UTF-8
 LazyData: true
